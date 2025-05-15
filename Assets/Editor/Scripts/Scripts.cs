@@ -3,41 +3,62 @@ using System.Linq;
 using System;
 using System.IO;
 using UnityEditor;
-using UnityEngine;
-public static class Scripts {
-    public static void Create(List<ActorJson> actorList) {
+using UnityEditorInternal;
+
+public static class Scripts
+{
+    public static void Create(List<ActorJson> actorList)
+    {
         Directory.Delete("Assets/Resources/Scripts/", true);
         Directory.CreateDirectory("Assets/Resources/Scripts/");
-        foreach (ActorJson actor in actorList) {
-            // if (actor.Script.Any()) {
-            List<string> tags = new List<string>();
+        foreach (ActorJson actor in actorList)
+        {
+            List<string> tags = new List<string>(InternalEditorUtility.tags); //Modificado
             List<string> mouseEvents = new List<string>();
             List<string> scope = new List<string>();
             List<string> spawns = new List<string>();
             List<string> properties = new List<string>();
             string scriptsPath = "Assets/Resources/Scripts/" + actor.Name + ".cs";
             StreamWriter outfile = new StreamWriter(scriptsPath);
-            // Add Header
+            bool hasCollision = false; //Nuevo
+
+            // Header
             outfile.WriteLine("using UnityEngine;");
             outfile.WriteLine("using System.Collections.Generic;");
             outfile.WriteLine("");
             outfile.WriteLine("public class " + actor.Name + " : MonoBehaviour {");
-            // Add New Properties
+
+            // Properties
             outfile.WriteLine("    public bool Active = " + actor.Active.ToString().ToLower() + ";");
-            foreach (string p in actor.Properties) {
+            foreach (string p in actor.Properties)
+            {
                 properties.Add(p);
                 outfile.WriteLine("    public float " + p + "f;");
             }
-            // Add Update 
+
+            // Acumuladores de estructuras
+            string joinProperties = string.Join(";", properties);
+            string joinSpawns = string.Join(",", spawns);
+            string joinScope = "";
+
+            // Diccionarios
+            if (joinProperties.Length > 0)
+                outfile.WriteLine("    public Dictionary<string, float> propertyList = new Dictionary<string, float>();");
+
+            // FixedUpdate
             outfile.WriteLine("    void FixedUpdate(){");
-            foreach (SentenceJson s in actor.Script) {
-                if (s.When.Any()) {
+            foreach (SentenceJson s in actor.Script)
+            {
+                if (s.When.Any())
+                {
                     outfile.Write("        if(");
-                    foreach (string c in s.When) {
+                    foreach (string c in s.When)
+                    {
                         string newC = c;
-                        if (c.Contains("Collision")) tags.Add(StringToElement(c));
+                        if (c.Contains("Collision")) hasCollision = true; //Editado
                         else if (c.Contains("Mouse")) mouseEvents.Add(StringToElement(c));
-                        else if (!c.Contains("Keyboard")) { // if not a Keyboard condition is a Compare condition
+                        else if (!c.Contains("Keyboard"))
+                        { // if not a Keyboard condition is a Compare condition
                             scope.Add(c);
                             newC = "Compare(" + c + ")";
                         }
@@ -47,74 +68,94 @@ public static class Scripts {
                     outfile.WriteLine("){");
                 }
                 else outfile.WriteLine("        {");
-                foreach (string a in s.Do) {
+
+                foreach (string a in s.Do)
+                {
                     string newA = a;
-                    if (a.Contains("=")) {
+                    if (a.Contains("="))
+                    {
                         var elements = a.Split(new string[] { "=" }, StringSplitOptions.None);
                         newA = "Edit(" + elements[0] + "," + elements[1] + ")";
                         scope.Add(newA);
                     }
-                    else if (a.Contains("Spawn") || a.Contains("Active") || a.Contains("Inactive")) spawns.Add(StringToElement(newA));
+                    else if (a.Contains("Spawn")) spawns.Add(StringToElement(newA));
                     else if (a.Contains("Move") || a.Contains("NavigateTo")) scope.Add(a);
+
                     outfile.WriteLine("                Action." + StringToCommand(newA) + ";");
                 }
                 outfile.WriteLine("        }");
             }
             outfile.WriteLine("    }");
-            // Add Awake
-            string joinProperties = string.Join(";", properties);
-            string joinSpawns = string.Join(",", spawns);
-            if (joinProperties.Length != 0 || joinSpawns.Length!=0) {
-                 outfile.WriteLine("    public Dictionary<string, float> propertyList = new Dictionary<string, float>();");
-                if (joinSpawns.Length != 0) outfile.WriteLine("    public Dictionary<string, GameObject> objectList = new Dictionary<string, GameObject>();");
-                outfile.WriteLine("    void Awake() {");
-                 outfile.WriteLine("        propertyList = Utils.CreateProperties(\"" + joinProperties + "\");");
-                if (joinSpawns.Length != 0) outfile.WriteLine("        objectList = Utils.CreateObjectList(\"" + joinSpawns + "\");");
-                outfile.WriteLine("    }");
+
+            // Awake (acumulador)
+            List<string> awakeLines = new List<string>();
+            if (joinProperties.Length != 0)
+                awakeLines.Add("        propertyList = Utils.CreateProperties(\"" + joinProperties + "\");");
+            if (spawns.Count > 0)
+            {
+                string joinSpawnsNow = string.Join(",", spawns);
             }
-            // Add Start
-            string joinScope = string.Join(";", scope);
-            if (joinScope.Length != 0) outfile.WriteLine("    public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();");
+
+            // Start
+            scope = scope.Distinct().ToList();
+            joinScope = string.Join(";", scope);
+            if (joinScope.Length != 0)
+                outfile.WriteLine("    public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();");
+
             outfile.WriteLine("    void Start() {");
-            if (joinScope.Length != 0) outfile.WriteLine("        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),\"" + joinScope + "\");");
-            outfile.WriteLine("        if (Active) gameObject.SetActive(true);"); 
+            if (joinScope.Length != 0)
+                outfile.WriteLine("        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),\"" + joinScope + "\");");
+            outfile.WriteLine("        if (Active) gameObject.SetActive(true);");
             outfile.WriteLine("        else gameObject.SetActive(false);");
             outfile.WriteLine("    }");
-            // Add OnTriggerEnter and OnTriggerExit
-            if (tags.Any()) {
+
+            // Collisions
+            if (hasCollision) //Editado
+            {
                 tags = tags.Distinct().ToList();
-                outfile.Write("    public Dictionary<string,bool> Tags = new Dictionary<string,bool>{");
-                foreach (string t in tags) {
-                    outfile.Write("{\"" + t + "\", false }");
-                    if (tags.Last() != t) outfile.Write(",");
-                }
-                outfile.WriteLine("};");
-                outfile.WriteLine("    void OnTriggerEnter (Collider other) {");
-                foreach (string t in tags) {
-                    outfile.WriteLine("        if (other.CompareTag(\"" + t + "\")) Tags[\"" + t + "\"]=true;");
-                }
+                outfile.WriteLine("    public Dictionary<string, HashSet<GameObject>> TagCollisions = new Dictionary<string, HashSet<GameObject>>();");
+                foreach (string t in tags)
+                    awakeLines.Add("        TagCollisions[\"" + t + "\"] = new HashSet<GameObject>();");
+                outfile.WriteLine("    void OnTriggerEnter(Collider other) {");
+                foreach (string t in tags)
+                    outfile.WriteLine("        if (other.CompareTag(\"" + t + "\")) TagCollisions[\"" + t + "\"].Add(other.gameObject);");
                 outfile.WriteLine("    }");
-                outfile.WriteLine("    void OnTriggerExit (Collider other) {");
-                foreach (string t in tags) {
-                    outfile.WriteLine("        if (other.CompareTag(\"" + t + "\")) Tags[\"" + t + "\"]=false;");
-                }
+                outfile.WriteLine("    void OnTriggerExit(Collider other) {");
+                foreach (string t in tags)
+                    outfile.WriteLine("        if (other.CompareTag(\"" + t + "\")) TagCollisions[\"" + t + "\"].Remove(other.gameObject);");
                 outfile.WriteLine("    }");
             }
-            // Add onMouseEvents
-            if (mouseEvents.Any()) {
-                foreach (string e in mouseEvents) {
+
+            // Escribir Awake
+            if (awakeLines.Any())
+            {
+                outfile.WriteLine("    void Awake() {");
+                foreach (string line in awakeLines)
+                    outfile.WriteLine(line);
+                outfile.WriteLine("    }");
+            }
+
+            // Mouse Events
+            if (mouseEvents.Any())
+            {
+                foreach (string e in mouseEvents)
+                {
                     outfile.WriteLine("    public bool Mouse" + e + " = false;");
                     outfile.WriteLine("    void OnMouse" + e + "(){");
                     outfile.WriteLine("        Mouse" + e + "=true;");
                     outfile.WriteLine("    }");
                 }
             }
+
+            // Cierre clase
             outfile.WriteLine("}");
             outfile.Close();
         }
         AssetDatabase.Refresh();
     }
-    private static string StringToCommand(string element) {// traslate a game.json comand into a valid unity command
+
+    private static string StringToCommand(string element)
+    {// traslate a game.json comand into a valid unity command
         int init = element.IndexOf("(");
         int end = element.LastIndexOf(")");
         string name = element.Substring(0, init);
@@ -123,23 +164,24 @@ public static class Scripts {
         string[] parameters = rest.Split(new string[] { "," }, StringSplitOptions.None);
         command += "(";
         int counter = 0;
-        foreach (string s in parameters) {
+        foreach (string s in parameters)
+        {
             counter++;
             command += "\"" + s + "\"";
             if (parameters.Length != counter) command += ",";
         }
         if (name == "Compare" || name == "Edit") command += ",scopeList)";
         else if (name == "Move" || name == "MoveTo" || name == "NavigateTo") command += ",gameObject,scopeList)";
-        else if (name == "Collision" || name == "Mouse" || name == "Animation" || name == "PlaySound" || name == "StopSound") command += ",gameObject)";
-        else if (name == "Keyboard") command += ")";
-        else if (name == "Spawn") command = "Spawn(objectList[\"" + parameters[0] + "\"],gameObject)";
-        else if (name == "Active") command = "Active(objectList[\"" + parameters[0] + "\"])";
-        else if (name == "Inactive") command = "Inactive(objectList[\"" + parameters[0] + "\"])";
+        else if (name == "Collision" || name == "Animation" || name == "PlaySound" || name == "StopSound" || name == "LookAt") command += ",gameObject)";
+        else if (name == "Keyboard" || name == "Mouse") command += ")";
+        else if (name == "Spawn") command = "Spawn(\"" + parameters[0] + "\", gameObject)";
         else if (name == "Delete") command = "Delete(gameObject)";
-        else if (name == "QuitGame" || name == "LoadScene") command = name + "()";
+        else if (name == "QuitGame" || name == "LoadScene" || name == "UpdateMousePosition") command = name + "()";
         return (command);
     }
-    private static string StringToElement(string element) {
+
+    private static string StringToElement(string element)
+    {
         int init = element.IndexOf("(");
         int end = element.LastIndexOf(")");
         string tag = element.Substring(init + 1, end - init - 1);

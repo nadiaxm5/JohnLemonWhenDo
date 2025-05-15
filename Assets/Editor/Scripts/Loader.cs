@@ -5,8 +5,10 @@ using UnityEngine.Rendering;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 
-public static class Loader {
-    public static void LoadJson(string fileName) {
+public static class Loader
+{
+    public static void LoadJson(string fileName)
+    {
         string jsonPath = Application.dataPath + "/Resources/Games/" + fileName;
         string json = File.ReadAllText(jsonPath);
         SceneJson scene = JsonUtility.FromJson<SceneJson>(json);
@@ -20,19 +22,31 @@ public static class Loader {
         if (scene.CameraRotation != null) Camera.transform.eulerAngles = new Vector3(scene.CameraRotation[0], scene.CameraRotation[1], scene.CameraRotation[2]);
         // Init Sun
         GameObject Sun = GameObject.Find("Directional Light");
-        Sun.name = "Sun"; // Set the name of the camera GameObject
+        Sun.name = "Sun"; // Set the name of the sun GameObject
         if (scene.SunPosition != null) Sun.transform.position = new Vector3(scene.SunPosition[0], scene.SunPosition[1], scene.SunPosition[2]);
         if (scene.SunRotation != null) Sun.transform.eulerAngles = new Vector3(scene.SunRotation[0], scene.SunRotation[1], scene.SunRotation[2]);
         RenderSettings.ambientMode = AmbientMode.Flat;
         if (scene.SunColor != null) Sun.GetComponent<Light>().color = new Color32(scene.SunColor[0], scene.SunColor[1], scene.SunColor[2], 255);
         if (scene.SunAmbientColor != null) RenderSettings.ambientLight = new Color32(scene.SunAmbientColor[0], scene.SunAmbientColor[1], scene.SunAmbientColor[2], 255); ;
+
+        // Init mouse positions (Nuevo)
+        GameObject MouseScreen = new GameObject("MouseScreen");
+        GameObject MouseWorld = new GameObject("MouseWorld");
+
+        MouseScreen.name = "MouseScreen";
+        MouseWorld.name = "MouseWorld";
+        MouseScreen.transform.position = Vector3.zero;
+        MouseWorld.transform.position = Vector3.zero;
+
         // Load GameObjects
         CreateTags(scene.Cast);
         LoadPrefabs(scene.Cast);
         LoadScripts(scene.Cast);
         Debug.Log("Load " + fileName + " finished");
     }
-    public static void CreateTags(List<ActorJson> actorList) {
+
+    public static void CreateTags(List<ActorJson> actorList)
+    {
         // Remove Tags
         SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
         SerializedProperty tagsProperty = tagManager.FindProperty("tags");
@@ -41,15 +55,19 @@ public static class Loader {
         tagManager.Update();
         // Create Tags
         List<string> tags = new List<string>() { "Untagged", "Respawn", "Finish", "EditorOnly", "MainCamera", "Player", "GameController" };
-        foreach (ActorJson actor in actorList) {
-            if (!tags.Contains(actor.Tag) && actor.Tag != null) {
+        foreach (ActorJson actor in actorList)
+        {
+            if (!tags.Contains(actor.Tag) && actor.Tag != null)
+            {
                 bool found = false;
                 int i = 0;
-                while (i < tagsProperty.arraySize && !found) {
+                while (i < tagsProperty.arraySize && !found)
+                {
                     if (tagsProperty.GetArrayElementAtIndex(i).stringValue == actor.Tag) found = true;
                     i++;
                 }
-                if (!found) {
+                if (!found)
+                {
                     tagsProperty.InsertArrayElementAtIndex(0);
                     tagsProperty.GetArrayElementAtIndex(0).stringValue = actor.Tag;
                 }
@@ -58,9 +76,12 @@ public static class Loader {
         tagManager.ApplyModifiedProperties();
         tagManager.Update();
     }
-    private static void LoadPrefabs(List<ActorJson> actorList) {
-        foreach (ActorJson actor in actorList) {
-            Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/" + actor.Prefab + ".prefab", typeof(GameObject));
+
+    private static void LoadPrefabs(List<ActorJson> actorList)
+    {
+        foreach (ActorJson actor in actorList)
+        {
+            Object prefab = AssetDatabase.LoadAssetAtPath("Assets/Resources/Prefabs/" + actor.Prefab + ".prefab", typeof(GameObject));
             GameObject obj = (GameObject)PrefabUtility.InstantiatePrefab((GameObject)prefab);
             obj.name = actor.Name;
             if (actor.Tag != null) obj.tag = actor.Tag;
@@ -70,10 +91,13 @@ public static class Loader {
         }
         AssetDatabase.Refresh();
     }
-    private static void LoadScripts(List<ActorJson> actorList) {
+
+    private static void LoadScripts(List<ActorJson> actorList)
+    {
         Scripts.Create(actorList); // Create Scripts
         var scripts = Resources.LoadAll<MonoScript>("Scripts");
-        foreach (var script in scripts) { // Add scripts to gameObjects
+        foreach (var script in scripts)
+        { // Add scripts to gameObjects
             GameObject obj = GameObject.Find(script.name);
             obj.AddComponent(script.GetClass());
         }

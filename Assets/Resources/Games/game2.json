@@ -23,7 +23,7 @@
 				"When":["this.counter>=100"],
 				"Do":["QuitGame()"]
 				},{
-				"When":["this.counter<=100"],
+				"When":["this.counter<100"],
 				"Do":["this.counter=this.counter+1"]
 				}
 			]
@@ -44,27 +44,27 @@
 			"Name":"John",
 			"Prefab":"JohnLemon",
 			"Position":[-9.8,0.0,-3.2],
-			"Properties":["move=0","speed=2","desp=5.6"],
+			"Properties":["move=0","delta=0.02","desp=5.6","time=1.0","oneTouch=1.0"],
 			"Script": [{
 				"Do":["this.move=0","Camera.x=this.x","Camera.z=this.z-this.desp"]
 				},{
 				"When":["Keyboard(RightArrow,Press)"],
-				"Do":["Move(90,this.speed)","this.ry=90","this.move=1"]
+				"Do":["this.x=this.x+this.delta","this.ry=90","this.move=1"]
 				},{
 				"When":["Keyboard(LeftArrow,Press)"],
-				"Do":["Move(-90,this.speed)","this.ry=-90","this.move=1"]
+				"Do":["this.x=this.x-this.delta","this.ry=-90","this.move=1"]
 				},{
 				"When":["Keyboard(UpArrow,Press)"],
-				"Do":["Move(0,this.speed)","this.ry=0","this.move=1"]
+				"Do":["this.z=this.z+this.delta","this.ry=0","this.move=1"]
 				},{
 				"When":["Keyboard(DownArrow,Press)"],
-				"Do":["Move(180,this.speed)","this.ry=180","this.move=1"]
+				"Do":["this.z=this.z-this.delta","this.ry=180","this.move=1"]
 				},{
 				"When":["Collision(Enemy)"],
-				"Do":["Caught.Active=1"]
+				"Do":["Active(Caught)"]
 				},{
 				"When":["Collision(End)"],
-				"Do":["Won.Active=1"]
+				"Do":["Active(Won)"]
 				},{
 				"When":["this.move==0"],
 				"Do":["StopSound(Footsteps)","Animation(0)"]
