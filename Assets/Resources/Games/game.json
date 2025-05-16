@@ -44,7 +44,7 @@
 			"Name":"John",
 			"Prefab":"JohnLemon",
 			"Position":[-9.8,0.0,-3.2],
-			"Properties":["move=0","speed=2","desp=5.6"],
+			"Properties":["move=0","speed=1","desp=5.6"],
 			"Script": [{
 				"Do":["this.move=0","Camera.x=this.x","Camera.z=this.z-this.desp"]
 				},{

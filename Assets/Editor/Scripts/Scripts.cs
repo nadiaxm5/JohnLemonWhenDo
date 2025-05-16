@@ -117,12 +117,13 @@ public static class Scripts
                 foreach (string t in tags)
                     awakeLines.Add("        TagCollisions[\"" + t + "\"] = new HashSet<GameObject>();");
                 outfile.WriteLine("    void OnTriggerEnter(Collider other) {");
-                foreach (string t in tags)
-                    outfile.WriteLine("        if (other.CompareTag(\"" + t + "\")) TagCollisions[\"" + t + "\"].Add(other.gameObject);");
+                outfile.WriteLine("        if (TagCollisions.ContainsKey(other.tag))");
+                outfile.WriteLine("            TagCollisions[other.tag].Add(other.gameObject);");
                 outfile.WriteLine("    }");
+
                 outfile.WriteLine("    void OnTriggerExit(Collider other) {");
-                foreach (string t in tags)
-                    outfile.WriteLine("        if (other.CompareTag(\"" + t + "\")) TagCollisions[\"" + t + "\"].Remove(other.gameObject);");
+                outfile.WriteLine("        if (TagCollisions.ContainsKey(other.tag))");
+                outfile.WriteLine("            TagCollisions[other.tag].Remove(other.gameObject);");
                 outfile.WriteLine("    }");
             }
 

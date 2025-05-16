@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class John : MonoBehaviour {
     public bool Active = true;
     public float move=0f;
-    public float speed=2f;
+    public float speed=1f;
     public float desp=5.6f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
@@ -56,29 +56,15 @@ public class John : MonoBehaviour {
     }
     public Dictionary<string, HashSet<GameObject>> TagCollisions = new Dictionary<string, HashSet<GameObject>>();
     void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("Untagged")) TagCollisions["Untagged"].Add(other.gameObject);
-        if (other.CompareTag("Respawn")) TagCollisions["Respawn"].Add(other.gameObject);
-        if (other.CompareTag("Finish")) TagCollisions["Finish"].Add(other.gameObject);
-        if (other.CompareTag("EditorOnly")) TagCollisions["EditorOnly"].Add(other.gameObject);
-        if (other.CompareTag("MainCamera")) TagCollisions["MainCamera"].Add(other.gameObject);
-        if (other.CompareTag("Player")) TagCollisions["Player"].Add(other.gameObject);
-        if (other.CompareTag("GameController")) TagCollisions["GameController"].Add(other.gameObject);
-        if (other.CompareTag("End")) TagCollisions["End"].Add(other.gameObject);
-        if (other.CompareTag("Enemy")) TagCollisions["Enemy"].Add(other.gameObject);
+        if (TagCollisions.ContainsKey(other.tag))
+            TagCollisions[other.tag].Add(other.gameObject);
     }
     void OnTriggerExit(Collider other) {
-        if (other.CompareTag("Untagged")) TagCollisions["Untagged"].Remove(other.gameObject);
-        if (other.CompareTag("Respawn")) TagCollisions["Respawn"].Remove(other.gameObject);
-        if (other.CompareTag("Finish")) TagCollisions["Finish"].Remove(other.gameObject);
-        if (other.CompareTag("EditorOnly")) TagCollisions["EditorOnly"].Remove(other.gameObject);
-        if (other.CompareTag("MainCamera")) TagCollisions["MainCamera"].Remove(other.gameObject);
-        if (other.CompareTag("Player")) TagCollisions["Player"].Remove(other.gameObject);
-        if (other.CompareTag("GameController")) TagCollisions["GameController"].Remove(other.gameObject);
-        if (other.CompareTag("End")) TagCollisions["End"].Remove(other.gameObject);
-        if (other.CompareTag("Enemy")) TagCollisions["Enemy"].Remove(other.gameObject);
+        if (TagCollisions.ContainsKey(other.tag))
+            TagCollisions[other.tag].Remove(other.gameObject);
     }
     void Awake() {
-        propertyList = Utils.CreateProperties("move=0;speed=2;desp=5.6");
+        propertyList = Utils.CreateProperties("move=0;speed=1;desp=5.6");
         TagCollisions["Untagged"] = new HashSet<GameObject>();
         TagCollisions["Respawn"] = new HashSet<GameObject>();
         TagCollisions["Finish"] = new HashSet<GameObject>();
