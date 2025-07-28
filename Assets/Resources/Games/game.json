@@ -67,10 +67,10 @@
 				"Do":["Won.Active=1"]
 				},{
 				"When":["this.move==0"],
-				"Do":["StopSound(Footsteps)","Animation(0)"]
+				"Do":["StopSound(Footsteps)","Animate(0)"]
 				},{
 				"When":["this.move==1"],
-				"Do":["PlaySound(Footsteps)","Animation(1)"]
+				"Do":["PlaySound(Footsteps)","Animate(1)"]
 				}
 			]
 		},{

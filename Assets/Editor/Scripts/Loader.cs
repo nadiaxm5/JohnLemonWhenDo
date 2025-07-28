@@ -15,28 +15,47 @@ public static class Loader
         scene.Cast.Reverse();
         var newScene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
         newScene.name = scene.Name;
-        // Init camera
-        GameObject Camera = GameObject.Find("Main Camera");
-        Camera.name = "Camera"; // Set the name of the camera GameObject
-        if (scene.CameraPosition != null) Camera.transform.position = new Vector3(scene.CameraPosition[0], scene.CameraPosition[1], scene.CameraPosition[2]);
-        if (scene.CameraRotation != null) Camera.transform.eulerAngles = new Vector3(scene.CameraRotation[0], scene.CameraRotation[1], scene.CameraRotation[2]);
-        // Init Sun
-        GameObject Sun = GameObject.Find("Directional Light");
-        Sun.name = "Sun"; // Set the name of the sun GameObject
-        if (scene.SunPosition != null) Sun.transform.position = new Vector3(scene.SunPosition[0], scene.SunPosition[1], scene.SunPosition[2]);
-        if (scene.SunRotation != null) Sun.transform.eulerAngles = new Vector3(scene.SunRotation[0], scene.SunRotation[1], scene.SunRotation[2]);
+
+        // Eliminar cámara y luz por defecto
+        GameObject defaultCamera = GameObject.Find("Main Camera");
+        if (defaultCamera != null) Object.DestroyImmediate(defaultCamera);
+        GameObject defaultLight = GameObject.Find("Directional Light");
+        if (defaultLight != null) Object.DestroyImmediate(defaultLight);
+
+        // Instanciar GameManager desde Prefab
+        GameObject gameManagerPrefab = Resources.Load<GameObject>("Prefabs/GameManager");
+        if (gameManagerPrefab == null)
+        {
+            Debug.LogError("Prefab GameManager no encontrado en Resources/Prefabs.");
+            return;
+        }
+
+        GameObject gmInstance = Object.Instantiate(gameManagerPrefab);
+        gmInstance.name = "GameManager";
+
+        // Modificar propiedades de la cámara del GameManager
+        Camera cam = gmInstance.GetComponentInChildren<Camera>();
+        if (cam != null && scene.CameraPosition != null)
+            cam.transform.position = new Vector3(scene.CameraPosition[0], scene.CameraPosition[1], scene.CameraPosition[2]);
+
+        if (cam != null && scene.CameraRotation != null)
+            cam.transform.eulerAngles = new Vector3(scene.CameraRotation[0], scene.CameraRotation[1], scene.CameraRotation[2]);
+
+        // Modificar propiedades de la luz del GameManager
+        Light sun = gmInstance.GetComponentInChildren<Light>();
+        if (sun != null && scene.SunPosition != null)
+            sun.transform.position = new Vector3(scene.SunPosition[0], scene.SunPosition[1], scene.SunPosition[2]);
+
+        if (sun != null && scene.SunRotation != null)
+            sun.transform.eulerAngles = new Vector3(scene.SunRotation[0], scene.SunRotation[1], scene.SunRotation[2]);
+
+        if (sun != null && scene.SunColor != null)
+            sun.color = new Color32(scene.SunColor[0], scene.SunColor[1], scene.SunColor[2], 255);
+
+        if (scene.SunAmbientColor != null)
+            RenderSettings.ambientLight = new Color32(scene.SunAmbientColor[0], scene.SunAmbientColor[1], scene.SunAmbientColor[2], 255);
+
         RenderSettings.ambientMode = AmbientMode.Flat;
-        if (scene.SunColor != null) Sun.GetComponent<Light>().color = new Color32(scene.SunColor[0], scene.SunColor[1], scene.SunColor[2], 255);
-        if (scene.SunAmbientColor != null) RenderSettings.ambientLight = new Color32(scene.SunAmbientColor[0], scene.SunAmbientColor[1], scene.SunAmbientColor[2], 255); ;
-
-        // Init mouse positions (Nuevo)
-        GameObject MouseScreen = new GameObject("MouseScreen");
-        GameObject MouseWorld = new GameObject("MouseWorld");
-
-        MouseScreen.name = "MouseScreen";
-        MouseWorld.name = "MouseWorld";
-        MouseScreen.transform.position = Vector3.zero;
-        MouseWorld.transform.position = Vector3.zero;
 
         // Load GameObjects
         CreateTags(scene.Cast);

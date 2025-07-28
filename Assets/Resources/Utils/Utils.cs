@@ -8,6 +8,7 @@ public static class Utils
     public static float GetProperty(KeyValuePair<string, GameObject> s)
     {
         string[] elements = s.Key.Split(new string[] { "." }, StringSplitOptions.None);
+        if (elements.Length < 2) return float.NaN;
         GameObject obj = s.Value;
         float value = float.NaN;
         if (obj != null)
@@ -91,12 +92,12 @@ public static class Utils
         Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
         List<string> baseProperties = new List<string> { "x", "y", "z", "rx", "ry", "rz", "sx", "sy", "sz", "Active" };
 
-        // Buscar todos los objetos raíz de la escena
+        // Añadir objetos raíz de la escena
         GameObject[] rootObjects = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
 
         foreach (GameObject root in rootObjects)
         {
-            // Recursivamente añadir todos los hijos, incluso si están inactivos
+            // Añadir todos los hijos
             foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
             {
                 GameObject obj = t.gameObject;
@@ -131,7 +132,7 @@ public static class Utils
                     foreach (string p in properties)
                     {
                         string thisProp = "this." + p;
-                        if (scope.Contains(thisProp) && !scopeList.ContainsKey(thisProp))
+                        if (!scopeList.ContainsKey(thisProp))
                         {
                             scopeList.Add(thisProp, obj);
                         }
@@ -140,10 +141,36 @@ public static class Utils
             }
         }
 
+        // Añadir variables globales
+        if (GameManager.Instance != null)
+        {
+            var globals = new Dictionary<string, GameObject>
+            {
+                { "Camera", GameManager.Instance.MainCamera?.gameObject },
+                { "Sun", GameManager.Instance.SunLight?.gameObject }
+            };
+
+            foreach (var pair in globals)
+            {
+                if (pair.Value == null) continue;
+
+                // Añadir tambien clave simple
+                if (!scopeList.ContainsKey(pair.Key))
+                    scopeList.Add(pair.Key, pair.Value);
+
+                foreach (string p in baseProperties)
+                {
+                    string fullName = pair.Key + "." + p;
+                    if (scope.Contains(fullName) && !scopeList.ContainsKey(fullName))
+                    {
+                        scopeList.Add(fullName, pair.Value);
+                    }
+                }
+            }
+        }
+
         return scopeList;
     }
-
-    //Eliminado CreateObjectList xq ya no se usa
 
     public static Dictionary<string, float> CreateProperties(string s)
     {
@@ -164,7 +191,6 @@ public static class Utils
         return (properties);
     }
 
-    //Nuevo
     public static void RemoveFromCollisions(GameObject me)
     {
         var script = me.GetComponent(me.name);

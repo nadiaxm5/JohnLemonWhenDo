@@ -41,11 +41,11 @@ public class John : MonoBehaviour {
         }
         if(Condition.Compare("this.move==0",scopeList)){
                 Action.StopSound("Footsteps",gameObject);
-                Action.Animation("0",gameObject);
+                Action.Animate("0",gameObject);
         }
         if(Condition.Compare("this.move==1",scopeList)){
                 Action.PlaySound("Footsteps",gameObject);
-                Action.Animation("1",gameObject);
+                Action.Animate("1",gameObject);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();

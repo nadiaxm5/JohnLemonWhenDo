@@ -43,7 +43,7 @@ public static class Condition
     //Modificado
     private static bool toggle = false;
 
-    public static bool Mouse(string type)
+    public static bool Touch(string type)
     {
         switch (type)
         {

@@ -1,37 +1,38 @@
 ﻿#region License and Information
+
 /*****
 * LogicExpressionParser.cs
-* 
+*
 * This is basically a rewrite and improvement of the ExpressionParser i wrote
 * in 2014 (http://wiki.unity3d.com/index.php/ExpressionParser). It's main goal
 * is to allow to parse logic expressions which evaluate to true or false.
-* 
+*
 * "Parse"       - returns a LogicExpression instance. This should be used when
 *                 the expression should evaluate to a boolean expression.
 * "ParseNumber" - returns a NumberExpression instance. This should be used
 *                 when the expression should evaluate to a numeric value.
-* 
-* Multiple expression objects can share one ExpressionContex which is 
+*
+* Multiple expression objects can share one ExpressionContex which is
 * responsible for resolving variables and constants.
-* 
-* 
+*
+*
 * [History]
 * 2016.11.24 - project start
 * 2017.08.20 - first release version.
-* 
+*
 * [License]
 * Copyright (c) 2017 Markus Göbel (Bunny83)
-* 
+*
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to
 * deal in the Software without restriction, including without limitation the
 * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
 * sell copies of the Software, and to permit persons to whom the Software is
 * furnished to do so, subject to the following conditions:
-* 
+*
 * The above copyright notice and this permission notice shall be included in
 * all copies or substantial portions of the Software.
-* 
+*
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -39,9 +40,11 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 * IN THE SOFTWARE.
-* 
+*
 *****/
+
 #endregion License and Information
+
 using System;
 using System.Collections.Generic;
 
@@ -51,16 +54,19 @@ namespace B83.LogicExpressionParser
     {
         bool GetResult();
     }
+
     public interface INumberProvider
     {
         double GetNumber();
     }
+
     public interface ICommandParser
     {
         bool Parse(Parser aParser, string aCommand, out ValueProvider aResult);
     }
 
     #region logic gates
+
     public class CombineAnd : ILogicResult
     {
         public List<ILogicResult> inputs = new List<ILogicResult>();
@@ -73,6 +79,7 @@ namespace B83.LogicExpressionParser
             return true;
         }
     }
+
     public class CombineOr : ILogicResult
     {
         public List<ILogicResult> inputs = new List<ILogicResult>();
@@ -85,6 +92,7 @@ namespace B83.LogicExpressionParser
             return false;
         }
     }
+
     public class CombineXor : ILogicResult
     {
         public List<ILogicResult> inputs = new List<ILogicResult>();
@@ -97,11 +105,15 @@ namespace B83.LogicExpressionParser
             return res;
         }
     }
+
     public class CombineNot : ILogicResult
     {
         public ILogicResult input;
-        public bool GetResult() { return !input.GetResult(); }
+
+        public bool GetResult()
+        { return !input.GetResult(); }
     }
+
     #endregion logic gates
 
     #region Arithmetic gates
@@ -117,6 +129,7 @@ namespace B83.LogicExpressionParser
                 res += inputs[i].GetNumber();
             return res;
         }
+
         public OperationAdd(params INumberProvider[] aInputs)
         {
             for (int i = 0; i < aInputs.Length; i++)
@@ -133,10 +146,12 @@ namespace B83.LogicExpressionParser
     public class OperationNegate : INumberProvider
     {
         public INumberProvider input;
+
         public double GetNumber()
         {
             return -input.GetNumber();
         }
+
         public OperationNegate(INumberProvider aInput)
         {
             input = aInput;
@@ -154,6 +169,7 @@ namespace B83.LogicExpressionParser
                 res *= inputs[i].GetNumber();
             return res;
         }
+
         public OperationProduct(params INumberProvider[] aInputs)
         {
             for (int i = 0; i < aInputs.Length; i++)
@@ -167,14 +183,15 @@ namespace B83.LogicExpressionParser
         }
     }
 
-
     public class OperationReciprocal : INumberProvider
     {
         public INumberProvider input;
+
         public double GetNumber()
         {
             return 1d / input.GetNumber();
         }
+
         public OperationReciprocal(INumberProvider aInput)
         {
             input = aInput;
@@ -185,105 +202,144 @@ namespace B83.LogicExpressionParser
     {
         public INumberProvider value;
         public INumberProvider power;
+
         public double GetNumber()
         {
             return Math.Pow(value.GetNumber(), power.GetNumber());
         }
+
         public OperationPower(INumberProvider aValue, INumberProvider aPower)
         {
             value = aValue;
             power = aPower;
         }
     }
+
     public class CustomFunction : INumberProvider
     {
         private Func<ParameterList, double> m_Func;
         private ParameterList m_Params;
+
         public CustomFunction(Func<ParameterList, double> aFunc, ParameterList aParams)
         {
             m_Func = aFunc;
             m_Params = aParams;
         }
+
         public double GetNumber()
         {
             return m_Func(m_Params);
         }
     }
 
-
-
     #endregion Arithmetic gates
 
     #region compare gates
+
     public abstract class CompareStatement : ILogicResult
     {
-        public bool GetResult() { return Compare(op1.GetNumber(), op2.GetNumber()); }
+        public bool GetResult()
+        { return Compare(op1.GetNumber(), op2.GetNumber()); }
+
         public INumberProvider op1;
         public INumberProvider op2;
+
         protected abstract bool Compare(double aOp1, double aOp2);
     }
+
     public class CompareEqual : CompareStatement
     {
-        protected override bool Compare(double aOp1, double aOp2) { return aOp1 == aOp2; }
+        protected override bool Compare(double aOp1, double aOp2)
+        { return aOp1 == aOp2; }
     }
+
     public class CompareNotEqual : CompareStatement
     {
-        protected override bool Compare(double aOp1, double aOp2) { return aOp1 != aOp2; }
+        protected override bool Compare(double aOp1, double aOp2)
+        { return aOp1 != aOp2; }
     }
+
     public class CompareGreater : CompareStatement
     {
-        protected override bool Compare(double aOp1, double aOp2) { return aOp1 > aOp2; }
+        protected override bool Compare(double aOp1, double aOp2)
+        { return aOp1 > aOp2; }
     }
+
     public class CompareGreaterOrEqual : CompareStatement
     {
-        protected override bool Compare(double aOp1, double aOp2) { return aOp1 >= aOp2; }
+        protected override bool Compare(double aOp1, double aOp2)
+        { return aOp1 >= aOp2; }
     }
+
     public class CompareLower : CompareStatement
     {
-        protected override bool Compare(double aOp1, double aOp2) { return aOp1 < aOp2; }
+        protected override bool Compare(double aOp1, double aOp2)
+        { return aOp1 < aOp2; }
     }
+
     public class CompareLowerOrEqual : CompareStatement
     {
-        protected override bool Compare(double aOp1, double aOp2) { return aOp1 <= aOp2; }
+        protected override bool Compare(double aOp1, double aOp2)
+        { return aOp1 <= aOp2; }
     }
+
     #endregion compare gates
 
     #region value providers
+
     public class ConstantNumber : INumberProvider
     {
         public double constantValue;
-        public double GetNumber() { return constantValue; }
+
+        public double GetNumber()
+        { return constantValue; }
     }
+
     public class ConstantBool : ILogicResult
     {
         public bool constantValue;
-        public bool GetResult() { return constantValue; }
+
+        public bool GetResult()
+        { return constantValue; }
     }
+
     public class DelegateNumber : INumberProvider
     {
         public System.Func<double> callback;
-        public double GetNumber() { return callback(); }
+
+        public double GetNumber()
+        { return callback(); }
     }
+
     public class DelegateBool : ILogicResult
     {
         public Func<bool> callback;
-        public bool GetResult() { return callback(); }
+
+        public bool GetResult()
+        { return callback(); }
     }
+
     public class NumberToBool : ILogicResult
     {
         public INumberProvider val;
-        public bool GetResult() { return val.GetNumber() > 0; }
+
+        public bool GetResult()
+        { return val.GetNumber() > 0; }
     }
+
     public class BoolToNumber : INumberProvider
     {
         public ILogicResult val;
-        public double GetNumber() { return val.GetResult() ? 1d : 0d; }
+
+        public double GetNumber()
+        { return val.GetResult() ? 1d : 0d; }
     }
 
     public class ValueProvider : INumberProvider, ILogicResult
     {
         protected ILogicResult m_BoolVal = null;
         protected INumberProvider m_NumberVal = null;
+
         public virtual double GetNumber()
         {
             if (m_NumberVal != null)
@@ -292,6 +348,7 @@ namespace B83.LogicExpressionParser
                 return m_BoolVal.GetResult() ? 1 : 0;
             return 0d;
         }
+
         public virtual bool GetResult()
         {
             if (m_BoolVal != null)
@@ -300,6 +357,7 @@ namespace B83.LogicExpressionParser
                 return m_NumberVal.GetNumber() > 0d;
             return false;
         }
+
         public virtual void Set(bool aValue)
         {
             var tmp = m_BoolVal as ConstantBool;
@@ -309,6 +367,7 @@ namespace B83.LogicExpressionParser
             m_BoolVal = tmp;
             m_NumberVal = null;
         }
+
         public virtual void Set(double aValue)
         {
             var tmp = m_NumberVal as ConstantNumber;
@@ -318,6 +377,7 @@ namespace B83.LogicExpressionParser
             m_NumberVal = tmp;
             m_BoolVal = null;
         }
+
         public virtual void Set(Func<bool> aValue)
         {
             var tmp = m_BoolVal as DelegateBool;
@@ -327,6 +387,7 @@ namespace B83.LogicExpressionParser
             m_BoolVal = tmp;
             m_NumberVal = null;
         }
+
         public virtual void Set(Func<double> aValue)
         {
             var tmp = m_NumberVal as DelegateNumber;
@@ -341,6 +402,7 @@ namespace B83.LogicExpressionParser
     public class ExpressionVariable : ValueProvider
     {
         public string Name { get; private set; }
+
         public ExpressionVariable(string aName)
         {
             Name = aName;
@@ -350,17 +412,22 @@ namespace B83.LogicExpressionParser
     public class ParameterList : INumberProvider
     {
         public List<INumberProvider> inputs = new List<INumberProvider>();
-        public ParameterList() { }
+
+        public ParameterList()
+        { }
+
         public ParameterList(INumberProvider aNumber)
         {
             inputs.Add(aNumber);
         }
+
         public double GetNumber()
         {
             if (inputs.Count > 0)
                 return inputs[0].GetNumber();
             return 0d;
         }
+
         public double this[int aIndex]
         {
             get
@@ -370,6 +437,7 @@ namespace B83.LogicExpressionParser
                 return inputs[aIndex].GetNumber();
             }
         }
+
         public bool Exists(int aIndex)
         {
             return aIndex < inputs.Count && aIndex >= 0;
@@ -378,10 +446,14 @@ namespace B83.LogicExpressionParser
 
     public class LogicExpression : ILogicResult
     {
-        public bool GetResult() { return expressionTree.GetResult(); }
-        public ExpressionContext Context { get { return context; } }
+        public bool GetResult()
+        { return expressionTree.GetResult(); }
+
+        public ExpressionContext Context
+        { get { return context; } }
         protected ILogicResult expressionTree;
         protected ExpressionContext context;
+
         public ExpressionVariable this[string aVarName]
         {
             get
@@ -389,6 +461,7 @@ namespace B83.LogicExpressionParser
                 return context[aVarName];
             }
         }
+
         public LogicExpression(ILogicResult aExpressionTree, ExpressionContext aContext)
         {
             expressionTree = aExpressionTree;
@@ -398,10 +471,14 @@ namespace B83.LogicExpressionParser
 
     public class NumberExpression : INumberProvider
     {
-        public double GetNumber() { return expressionTree.GetNumber(); }
-        public ExpressionContext Context { get { return context; } }
+        public double GetNumber()
+        { return expressionTree.GetNumber(); }
+
+        public ExpressionContext Context
+        { get { return context; } }
         protected INumberProvider expressionTree;
         protected ExpressionContext context;
+
         public ExpressionVariable this[string aVarName]
         {
             get
@@ -409,6 +486,7 @@ namespace B83.LogicExpressionParser
                 return context[aVarName];
             }
         }
+
         public NumberExpression(INumberProvider aExpressionTree, ExpressionContext aContext)
         {
             expressionTree = aExpressionTree;
@@ -419,15 +497,21 @@ namespace B83.LogicExpressionParser
     #endregion value providers
 
     #region Expression & Parsing Context
+
     public class ExpressionContext
     {
         protected Dictionary<string, ExpressionVariable> variables = new Dictionary<string, ExpressionVariable>();
-        public ExpressionContext() : this(true) { }
+
+        public ExpressionContext() : this(true)
+        {
+        }
+
         public ExpressionContext(bool aAddDefaultConstants)
         {
             if (aAddDefaultConstants)
                 AddMathConstants();
         }
+
         public void AddMathConstants()
         {
             this["e"].Set(Math.E);
@@ -435,6 +519,7 @@ namespace B83.LogicExpressionParser
             this["r2d"].Set(180d / Math.PI);
             this["d2r"].Set(Math.PI / 180d);
         }
+
         public virtual ExpressionVariable FindVariable(string aVarName)
         {
             ExpressionVariable res;
@@ -444,6 +529,7 @@ namespace B83.LogicExpressionParser
             }
             return null;
         }
+
         public virtual ExpressionVariable GetVariable(string aVarName)
         {
             ExpressionVariable res;
@@ -454,6 +540,7 @@ namespace B83.LogicExpressionParser
             }
             return res;
         }
+
         public virtual ExpressionVariable this[string aVarName]
         {
             get
@@ -469,12 +556,17 @@ namespace B83.LogicExpressionParser
         private List<ValueProvider> m_Commands = new List<ValueProvider>();
         private List<ICommandParser> m_CommandParser = new List<ICommandParser>();
         private Dictionary<string, Func<ParameterList, double>> m_Functions = new Dictionary<string, Func<ParameterList, double>>();
-        public ParsingContext() : this(true) { }
+
+        public ParsingContext() : this(true)
+        {
+        }
+
         public ParsingContext(bool aAddMathMethods)
         {
             if (aAddMathMethods)
                 AddMathFunctions();
         }
+
         public void AddMathFunctions()
         {
             var rnd = new System.Random();
@@ -500,24 +592,28 @@ namespace B83.LogicExpressionParser
             AddFunction("pow", (p) => Math.Pow(p[0], p[1]));
 
             AddFunction("lerp", (p) => { var s = p[0]; return s + (p[1] - s) * p[2]; });
-            AddFunction("rand", (p) => {
+            AddFunction("rand", (p) =>
+            {
                 var p0 = p[0];
                 if (p.Exists(1))
                     return p0 + rnd.NextDouble() * (p[1] - p0);
                 else
                     return rnd.NextDouble() * p[0];
             });
-            AddFunction("clamp", (p) => {
+            AddFunction("clamp", (p) =>
+            {
                 var p0 = p[0];
                 var p1 = p[0];
                 var p2 = p[0];
                 return p0 < p1 ? p1 : (p0 > p2) ? p2 : p0;
             });
-            AddFunction("clamp01", (p) => {
+            AddFunction("clamp01", (p) =>
+            {
                 var p0 = p[0];
                 return p0 < 0d ? 0d : (p0 > 1d) ? 1d : p0;
             });
         }
+
         public static int FindClosingBracket(string aText, int aStart, char aOpen, char aClose)
         {
             int counter = 0;
@@ -532,6 +628,7 @@ namespace B83.LogicExpressionParser
             }
             return -1;
         }
+
         private void SubstitudeBracket(ref string aExpression, int aIndex)
         {
             int closing = FindClosingBracket(aExpression, aIndex, '(', ')');
@@ -544,6 +641,7 @@ namespace B83.LogicExpressionParser
             }
             else throw new ParseException("Bracket not closed!");
         }
+
         private void SubstitudeCommand(Parser aParser, ref string aExpression, int aIndex)
         {
             int closing = FindClosingBracket(aExpression, aIndex, '{', '}');
@@ -584,6 +682,7 @@ namespace B83.LogicExpressionParser
                 index = aExpression.IndexOf('(');
             }
         }
+
         private bool ParseToken(ref string aExpression, out char aTokenType, out int aIndex)
         {
             int index2a = aExpression.IndexOf("$");
@@ -604,6 +703,7 @@ namespace B83.LogicExpressionParser
             aIndex = -1;
             return false;
         }
+
         public string GetBracket(ref string aExpression)
         {
             char type;
@@ -612,6 +712,7 @@ namespace B83.LogicExpressionParser
                 return m_BracketHeap[index];
             return null;
         }
+
         public ValueProvider GetCommand(ref string aExpression)
         {
             char type;
@@ -628,6 +729,7 @@ namespace B83.LogicExpressionParser
                 return f;
             return null;
         }
+
         public void AddFunction(string aName, Func<ParameterList, double> aFunc)
         {
             if (m_Functions.ContainsKey(aName))
@@ -636,20 +738,27 @@ namespace B83.LogicExpressionParser
                 m_Functions.Add(aName, aFunc);
         }
     }
+
     #endregion Expression & Parsing Context
 
     public class Parser
     {
         private ParsingContext m_ParsingContext;
         private ExpressionContext context;
-        public ParsingContext ParsingContext { get { return m_ParsingContext; } set { m_ParsingContext = value; } }
-        public ExpressionContext ExpressionContext { get { return context; } set { context = value; } }
+        public ParsingContext ParsingContext
+        { get { return m_ParsingContext; } set { m_ParsingContext = value; } }
+        public ExpressionContext ExpressionContext
+        { get { return context; } set { context = value; } }
 
-        public Parser() : this(new ParsingContext()) { }
+        public Parser() : this(new ParsingContext())
+        {
+        }
+
         public Parser(ParsingContext aParsingContext)
         {
             context = new ExpressionContext();
             m_ParsingContext = aParsingContext;
+            AddGlobalReferences(); // Aquí se incluyen los objetos globales automáticamente
         }
 
         private ILogicResult ParseLogicResult(string aExpression, int aMaxRecursion)
@@ -799,7 +908,6 @@ namespace B83.LogicExpressionParser
             {
                 return new ConstantBool { constantValue = false };
             }
-
 
             string bracketContent = m_ParsingContext.GetBracket(ref aExpression);
             if (!string.IsNullOrEmpty(bracketContent))
@@ -990,10 +1098,31 @@ namespace B83.LogicExpressionParser
                 return false;
             return true;
         }
+
+        private void AddGlobalReferences()
+        {
+            if (GameManager.Instance == null) return;
+
+            if (GameManager.Instance.MainCamera != null)
+                ExpressionContext["Camera"].Set(GameManager.Instance.MainCamera.gameObject);
+
+            if (GameManager.Instance.SunLight != null)
+                ExpressionContext["Sun"].Set(GameManager.Instance.SunLight.gameObject);
+
+            ExpressionContext["MouseScreenX"].Set(() => GameManager.Instance.MouseScreenX);
+            ExpressionContext["MouseScreenY"].Set(() => GameManager.Instance.MouseScreenY);
+            ExpressionContext["MouseScreenZ"].Set(() => GameManager.Instance.MouseScreenZ);
+
+            ExpressionContext["MouseWorldX"].Set(() => GameManager.Instance.MouseWorldX);
+            ExpressionContext["MouseWorldY"].Set(() => GameManager.Instance.MouseWorldY);
+            ExpressionContext["MouseWorldZ"].Set(() => GameManager.Instance.MouseWorldZ);
+        }
     }
 
     public class ParseException : Exception
     {
-        public ParseException(string aMessage) : base(aMessage) { }
+        public ParseException(string aMessage) : base(aMessage)
+        {
+        }
     }
 }

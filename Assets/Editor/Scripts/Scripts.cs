@@ -13,14 +13,14 @@ public static class Scripts
         Directory.CreateDirectory("Assets/Resources/Scripts/");
         foreach (ActorJson actor in actorList)
         {
-            List<string> tags = new List<string>(InternalEditorUtility.tags); //Modificado
+            List<string> tags = new List<string>(InternalEditorUtility.tags);
             List<string> mouseEvents = new List<string>();
             List<string> scope = new List<string>();
             List<string> spawns = new List<string>();
             List<string> properties = new List<string>();
             string scriptsPath = "Assets/Resources/Scripts/" + actor.Name + ".cs";
             StreamWriter outfile = new StreamWriter(scriptsPath);
-            bool hasCollision = false; //Nuevo
+            bool hasCollision = false;
 
             // Header
             outfile.WriteLine("using UnityEngine;");
@@ -56,7 +56,7 @@ public static class Scripts
                     {
                         string newC = c;
                         if (c.Contains("Collision")) hasCollision = true; //Editado
-                        else if (c.Contains("Mouse")) mouseEvents.Add(StringToElement(c));
+                        else if (c.Contains("Touch")) mouseEvents.Add(StringToElement(c));
                         else if (!c.Contains("Keyboard"))
                         { // if not a Keyboard condition is a Compare condition
                             scope.Add(c);
@@ -110,7 +110,7 @@ public static class Scripts
             outfile.WriteLine("    }");
 
             // Collisions
-            if (hasCollision) //Editado
+            if (hasCollision)
             {
                 tags = tags.Distinct().ToList();
                 outfile.WriteLine("    public Dictionary<string, HashSet<GameObject>> TagCollisions = new Dictionary<string, HashSet<GameObject>>();");
@@ -172,12 +172,28 @@ public static class Scripts
             if (parameters.Length != counter) command += ",";
         }
         if (name == "Compare" || name == "Edit") command += ",scopeList)";
-        else if (name == "Move" || name == "MoveTo" || name == "NavigateTo") command += ",gameObject,scopeList)";
-        else if (name == "Collision" || name == "Animation" || name == "PlaySound" || name == "StopSound" || name == "LookAt") command += ",gameObject)";
-        else if (name == "Keyboard" || name == "Mouse") command += ")";
-        else if (name == "Spawn") command = "Spawn(\"" + parameters[0] + "\", gameObject)";
+        else if (name == "Move" || name == "MoveTo" || name == "NavigateTo" || name == "RotateTo") command += ",gameObject,scopeList)";
+        else if (name == "Collision" || name == "Animate" || name == "PlaySound" || name == "StopSound" || name == "PlayParticles" || name == "StopParticles") command += ",gameObject)";
+        else if (name == "Keyboard" || name == "Touch") command += ")";
         else if (name == "Delete") command = "Delete(gameObject)";
-        else if (name == "QuitGame" || name == "LoadScene" || name == "UpdateMousePosition") command = name + "()";
+        else if (name == "QuitGame" || name == "LoadScene") command = name + "()";
+        else if (name == "Spawn")
+        {
+            string prefab = parameters[0];
+            command = $"Spawn(\"{prefab}\", gameObject";
+
+            List<string> extraParams = new List<string>();
+            for (int i = 2; i < parameters.Length; i++)
+                extraParams.Add($"\"{parameters[i].Trim()}\"");
+
+            while (extraParams.Count < 4)
+                extraParams.Add("\"0\"");
+
+            foreach (string param in extraParams)
+                command += $", {param}";
+
+            command += ", scopeList)";
+        }
         return (command);
     }
 
