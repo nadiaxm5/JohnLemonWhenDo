@@ -125,14 +125,48 @@ public static class Action
     {
         AudioSource[] audios = obj.GetComponents<AudioSource>();
         foreach (AudioSource audio in audios)
-            if (audio.clip.name == audioClip && !audio.isPlaying) audio.Play();
+        {
+            if (audio.clip != null && audio.clip.name == audioClip && !audio.isPlaying)
+            {
+                audio.Play();
+                return;
+            }
+        }
+
+        AudioSource[] childAudios = obj.GetComponentsInChildren<AudioSource>();
+        foreach (AudioSource audio in childAudios)
+        {
+            if (audio.gameObject == obj) continue;
+            if (audio.clip != null && audio.clip.name == audioClip && !audio.isPlaying)
+            {
+                audio.Play();
+                return;
+            }
+        }
     }
 
     public static void StopSound(string audioClip, GameObject obj)
     {
         AudioSource[] audios = obj.GetComponents<AudioSource>();
         foreach (AudioSource audio in audios)
-            if (audio.clip.name == audioClip) audio.Stop();
+        {
+            if (audio.clip != null && audio.clip.name == audioClip && audio.isPlaying)
+            {
+                audio.Stop();
+                return;
+            }
+        }
+
+        AudioSource[] childAudios = obj.GetComponentsInChildren<AudioSource>();
+        foreach (AudioSource audio in childAudios)
+        {
+            if (audio.gameObject == obj) continue;
+            if (audio.clip != null && audio.clip.name == audioClip && audio.isPlaying)
+            {
+                audio.Stop();
+                return;
+            }
+        }
     }
 
     public static void PlayParticles(string particleSystemName, GameObject obj)
@@ -179,6 +213,27 @@ public static class Action
     {
         Utils.RemoveFromCollisions(me);
         Object.Destroy(me);
+    }
+
+    public static void Rotate(string angleExp, string rxExp, string ryExp, string rzExp, GameObject obj, Dictionary<string, GameObject> scopeList)
+    {
+        Parser parser = new Parser();
+        foreach (var pair in scopeList)
+            parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
+
+        float angleSpeed = (float)parser.ParseNumber(angleExp).GetNumber(); // grados por segundo
+        float rx = (float)parser.ParseNumber(rxExp).GetNumber();
+        float ry = (float)parser.ParseNumber(ryExp).GetNumber();
+        float rz = (float)parser.ParseNumber(rzExp).GetNumber();
+
+        Vector3 pivot = new Vector3(rx, ry, rz);
+        float angleDelta = angleSpeed * Time.deltaTime;
+
+        // Rotación alrededor del eje Y (plano horizontal)
+        obj.transform.RotateAround(pivot, Vector3.up, angleDelta);
+
+        // Guardamos la rotación actual en ry
+        Utils.SetProperty(obj.name + ".ry", obj.transform.eulerAngles.y, obj);
     }
 
     public static void RotateTo(string xExp, string yExp, string zExp, string speedExp, GameObject obj, Dictionary<string, GameObject> scopeList)

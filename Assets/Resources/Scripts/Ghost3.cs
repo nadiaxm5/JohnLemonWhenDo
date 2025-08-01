@@ -14,19 +14,19 @@ public class Ghost3 : MonoBehaviour {
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         {
-                Action.NavigateTo("this.xObj","this.zObj","this.speed",gameObject,scopeList);
+            Action.NavigateTo("this.xObj","this.zObj","this.speed",gameObject,scopeList);
         }
         if(Condition.Compare("(abs(this.z-this.z1)<this.delta) && (abs(this.x-this.x0)<this.delta)",scopeList)){
-                Action.Edit("this.xObj","this.x1",scopeList);
+            Action.Edit("this.xObj","this.x1",scopeList);
         }
         if(Condition.Compare("(abs(this.z-this.z1)<this.delta) && (abs(this.x-this.x1)<this.delta)",scopeList)){
-                Action.Edit("this.zObj","this.z0",scopeList);
+            Action.Edit("this.zObj","this.z0",scopeList);
         }
         if(Condition.Compare("(abs(this.z-this.z0)<this.delta) && (abs(this.x-this.x1)<this.delta)",scopeList)){
-                Action.Edit("this.xObj","this.x0",scopeList);
+            Action.Edit("this.xObj","this.x0",scopeList);
         }
         if(Condition.Compare("(abs(this.z-this.z0)<this.delta) && (abs(this.x-this.x0)<this.delta)",scopeList)){
-                Action.Edit("this.zObj","this.z1",scopeList);
+            Action.Edit("this.zObj","this.z1",scopeList);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
