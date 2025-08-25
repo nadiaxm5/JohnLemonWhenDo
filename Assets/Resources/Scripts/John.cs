@@ -12,6 +12,7 @@ public class John : MonoBehaviour {
             Action.Edit("this.move","0",scopeList);
             Action.Edit("Camera.x","this.x",scopeList);
             Action.Edit("Camera.z","this.z-this.desp",scopeList);
+            Action.Animate("0",gameObject);
         }
         if(Condition.Collision("Enemy",gameObject)){
             Action.Edit("Caught.Active","1",scopeList);
@@ -21,32 +22,34 @@ public class John : MonoBehaviour {
         }
         if(Condition.Compare("this.move==0",scopeList)){
             Action.StopSound("Footsteps",gameObject);
-            Action.Animate("0",gameObject);
         }
         if(Condition.Compare("this.move==1",scopeList)){
             Action.PlaySound("Footsteps",gameObject);
-            Action.Animate("1",gameObject);
         }
     }
     void Update(){
         if(Condition.Keyboard("RightArrow","Press")){
             Action.Move("90","this.speed",gameObject,scopeList);
             Action.Edit("this.ry","90",scopeList);
+            Action.Animate("1",gameObject);
             Action.Edit("this.move","1",scopeList);
         }
         if(Condition.Keyboard("LeftArrow","Press")){
             Action.Move("-90","this.speed",gameObject,scopeList);
             Action.Edit("this.ry","-90",scopeList);
+            Action.Animate("1",gameObject);
             Action.Edit("this.move","1",scopeList);
         }
         if(Condition.Keyboard("UpArrow","Press")){
             Action.Move("0","this.speed",gameObject,scopeList);
             Action.Edit("this.ry","0",scopeList);
+            Action.Animate("1",gameObject);
             Action.Edit("this.move","1",scopeList);
         }
         if(Condition.Keyboard("DownArrow","Press")){
             Action.Move("180","this.speed",gameObject,scopeList);
             Action.Edit("this.ry","180",scopeList);
+            Action.Animate("1",gameObject);
             Action.Edit("this.move","1",scopeList);
         }
     }

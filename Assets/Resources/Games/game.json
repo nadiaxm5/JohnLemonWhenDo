@@ -46,19 +46,19 @@
 			"Position":[-9.8,0.0,-3.2],
 			"Properties":["move=0","speed=1","desp=5.6"],
 			"Script": [{
-				"Do":["this.move=0","Camera.x=this.x","Camera.z=this.z-this.desp"]
+				"Do":["this.move=0","Camera.x=this.x","Camera.z=this.z-this.desp","Animate(0)"]
 				},{
 				"When":["Keyboard(RightArrow,Press)"],
-				"Do":["Move(90,this.speed)","this.ry=90","this.move=1"]
+				"Do":["Move(90,this.speed)","this.ry=90","Animate(1)","this.move=1"]
 				},{
 				"When":["Keyboard(LeftArrow,Press)"],
-				"Do":["Move(-90,this.speed)","this.ry=-90","this.move=1"]
+				"Do":["Move(-90,this.speed)","this.ry=-90","Animate(1)","this.move=1"]
 				},{
 				"When":["Keyboard(UpArrow,Press)"],
-				"Do":["Move(0,this.speed)","this.ry=0","this.move=1"]
+				"Do":["Move(0,this.speed)","this.ry=0","Animate(1)","this.move=1"]
 				},{
 				"When":["Keyboard(DownArrow,Press)"],
-				"Do":["Move(180,this.speed)","this.ry=180","this.move=1"]
+				"Do":["Move(180,this.speed)","this.ry=180","Animate(1)","this.move=1"]
 				},{
 				"When":["Collision(Enemy)"],
 				"Do":["Caught.Active=1"]
@@ -67,10 +67,10 @@
 				"Do":["Won.Active=1"]
 				},{
 				"When":["this.move==0"],
-				"Do":["StopSound(Footsteps)","Animate(0)"]
+				"Do":["StopSound(Footsteps)"]
 				},{
 				"When":["this.move==1"],
-				"Do":["PlaySound(Footsteps)","Animate(1)"]
+				"Do":["PlaySound(Footsteps)"]
 				}
 			]
 		},{
