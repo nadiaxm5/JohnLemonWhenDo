@@ -20,10 +20,10 @@
 			"Active": false,
 			"Properties":["counter=0"],
 			"Script":[{
-				"When":["this.counter>=100"],
+				"When":["Compare(this.counter>=100)"],
 				"Do":["QuitGame()"]
 				},{
-				"When":["this.counter<=100"],
+				"When":["Compare(this.counter<=100)"],
 				"Do":["this.counter=this.counter+1"]
 				}
 			]
@@ -33,10 +33,10 @@
 			"Active": false,
 			"Properties":["counter=0"],
 			"Script":[{
-				"When":["this.counter>=100"],
+				"When":["Compare(this.counter>=100)"],
 				"Do":["LoadScene()"]
 				},{
-				"When":["this.counter<100"],
+				"When":["Compare(this.counter<100)"],
 				"Do":["this.counter=this.counter+1"]
 				}
 			]
@@ -48,16 +48,16 @@
 			"Script": [{
 				"Do":["this.move=0","Camera.x=this.x","Camera.z=this.z-this.desp","Animate(0)"]
 				},{
-				"When":["Keyboard(RightArrow,Press)"],
+				"When":["Keyboard(RightArrow,press)"],
 				"Do":["Move(90,this.speed)","this.ry=90","Animate(1)","this.move=1"]
 				},{
-				"When":["Keyboard(LeftArrow,Press)"],
+				"When":["Keyboard(LeftArrow,press)"],
 				"Do":["Move(-90,this.speed)","this.ry=-90","Animate(1)","this.move=1"]
 				},{
-				"When":["Keyboard(UpArrow,Press)"],
+				"When":["Keyboard(UpArrow,press)"],
 				"Do":["Move(0,this.speed)","this.ry=0","Animate(1)","this.move=1"]
 				},{
-				"When":["Keyboard(DownArrow,Press)"],
+				"When":["Keyboard(DownArrow,press)"],
 				"Do":["Move(180,this.speed)","this.ry=180","Animate(1)","this.move=1"]
 				},{
 				"When":["Collision(Enemy)"],
@@ -66,10 +66,10 @@
 				"When":["Collision(End)"],
 				"Do":["Won.Active=1"]
 				},{
-				"When":["this.move==0"],
+				"When":["Compare(this.move==0)"],
 				"Do":["StopSound(Footsteps)"]
 				},{
-				"When":["this.move==1"],
+				"When":["Compare(this.move==1)"],
 				"Do":["PlaySound(Footsteps)"]
 				}
 			]
@@ -94,10 +94,10 @@
 			"Script":[{
 				"Do":["NavigateTo(this.x,this.zObj,this.speed)"]
 				},{
-				"When":["this.z>=this.z1"],
+				"When":["Compare(this.z>=this.z1)"],
 				"Do":["this.zObj=this.z0"]
 				},{
-				"When":["this.z<=this.z0"],
+				"When":["Compare(this.z<=this.z0)"],
 				"Do":["this.zObj=this.z1"]
 				}
 			]
@@ -110,10 +110,10 @@
 			"Script":[{
 				"Do":["NavigateTo(this.x,this.zObj,this.speed)"]
 				},{
-				"When":["this.z>=this.z1"],
+				"When":["Compare(this.z>=this.z1)"],
 				"Do":["this.zObj=this.z0"]
 				},{
-				"When":["this.z<=this.z0"],
+				"When":["Compare(this.z<=this.z0)"],
 				"Do":["this.zObj=this.z1"]
 				}
 			]

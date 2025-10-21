@@ -220,20 +220,20 @@ public static class Action
         Parser parser = new Parser();
         foreach (var pair in scopeList)
             parser.ExpressionContext[pair.Key].Set(Utils.GetProperty(pair));
-
-        float angleSpeed = (float)parser.ParseNumber(angleExp).GetNumber(); // grados por segundo
+        float angleSpeed = (float)parser.ParseNumber(angleExp).GetNumber();
         float rx = (float)parser.ParseNumber(rxExp).GetNumber();
         float ry = (float)parser.ParseNumber(ryExp).GetNumber();
         float rz = (float)parser.ParseNumber(rzExp).GetNumber();
 
-        Vector3 pivot = new Vector3(rx, ry, rz);
         float angleDelta = angleSpeed * Time.deltaTime;
 
-        // Rotación alrededor del eje Y (plano horizontal)
-        obj.transform.RotateAround(pivot, Vector3.up, angleDelta);
+        Vector3 localAxis = new Vector3(rx, ry, rz).normalized;
+        if (localAxis == Vector3.zero) localAxis = Vector3.up;
+        obj.transform.Rotate(localAxis, angleDelta, Space.Self);
 
-        // Guardamos la rotación actual en ry
+        Utils.SetProperty(obj.name + ".rx", obj.transform.eulerAngles.x, obj);
         Utils.SetProperty(obj.name + ".ry", obj.transform.eulerAngles.y, obj);
+        Utils.SetProperty(obj.name + ".rz", obj.transform.eulerAngles.z, obj);
     }
 
     public static void RotateTo(string xExp, string yExp, string zExp, string speedExp, GameObject obj, Dictionary<string, GameObject> scopeList)
