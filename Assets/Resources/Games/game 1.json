@@ -66,6 +66,9 @@
 				"When":["Collision(End)"],
 				"Do":["Won.Active=1"]
 				},{
+				"When":["Compare(this.move==0)"],
+				"Do":["StopSound(Footsteps)"]
+				},{
 				"When":["Compare(this.move==1)"],
 				"Do":["PlaySound(Footsteps)"]
 				}
