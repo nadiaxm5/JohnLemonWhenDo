@@ -14,7 +14,7 @@ public class Ghost4 : MonoBehaviour {
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         {
-            Action.NavigateTo("this.xObj","this.zObj","this.speed",gameObject,scopeList);
+            Action.NavigateTo("this.speed","this.xObj","this.y","this.zObj",gameObject,scopeList);
         }
         if(Condition.Compare("(abs(this.z-this.z0)<this.delta) && (abs(this.x-this.x0)<this.delta)",scopeList)){
             Action.Edit("this.xObj","this.x1",scopeList);
@@ -27,7 +27,7 @@ public class Ghost4 : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"NavigateTo(this.xObj,this.zObj,this.speed);(abs(this.z-this.z0)<this.delta) && (abs(this.x-this.x0)<this.delta);Edit(this.xObj,this.x1);Edit(this.zObj,this.z1);(abs(this.z-this.z1)<this.delta) && (abs(this.x-this.x1)<this.delta);Edit(this.xObj,this.x0);Edit(this.zObj,this.z0)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"NavigateTo(this.speed,this.xObj,this.y,this.zObj);(abs(this.z-this.z0)<this.delta) && (abs(this.x-this.x0)<this.delta);Edit(this.xObj,this.x1);Edit(this.zObj,this.z1);(abs(this.z-this.z1)<this.delta) && (abs(this.x-this.x1)<this.delta);Edit(this.xObj,this.x0);Edit(this.zObj,this.z0)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

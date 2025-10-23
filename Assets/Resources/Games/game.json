@@ -89,7 +89,7 @@
 			"Position":[-5.5,0.0,-4.5],
 			"Properties":["speed=1.0","zObj=6.4","z0=-4.5","z1=6.4"],
 			"Script":[{
-				"Do":["NavigateTo(this.x,this.zObj,this.speed)"]
+				"Do":["NavigateTo(this.speed,this.x,this.y,this.zObj)"]
 				},{
 				"When":["Compare(this.z>=this.z1)"],
 				"Do":["this.zObj=this.z0"]
@@ -105,7 +105,7 @@
 			"Position":[0.9,0.0,-3.5],
 			"Properties":["speed=1.0","zObj=7.6","z0=-3.5","z1=7.6"],
 			"Script":[{
-				"Do":["NavigateTo(this.x,this.zObj,this.speed)"]
+				"Do":["NavigateTo(this.speed,this.x,this.y,this.zObj)"]
 				},{
 				"When":["Compare(this.z>=this.z1)"],
 				"Do":["this.zObj=this.z0"]
@@ -121,7 +121,7 @@
 			"Position":[3.3,0.0,5.8],
 			"Properties":["delta=0.5","speed=1.0","xObj=3.2","zObj=12.3","x0=3.2","x1=6.5","z0=5.7","z1=12.3"],
 			"Script":[{
-				"Do":["NavigateTo(this.xObj,this.zObj,this.speed)"]
+				"Do":["NavigateTo(this.speed,this.xObj,this.y,this.zObj)"]
 				},{
 				"When":["(abs(this.z-this.z1)<this.delta) && (abs(this.x-this.x0)<this.delta)"],
 				"Do":["this.xObj=this.x1"]
@@ -143,7 +143,7 @@
 			"Position":[3.2,0.0,-5.0],
 			"Properties":["delta=0.5","speed=1.0","xObj=7.4","zObj=-2.0","x0=3.2","x1=7.4","z0=-5","z1=-2"],
 			"Script":[{
-				"Do":["NavigateTo(this.xObj,this.zObj,this.speed)"]
+				"Do":["NavigateTo(this.speed,this.xObj,this.y,this.zObj)"]
 				},{
 				"When":["(abs(this.z-this.z0)<this.delta) && (abs(this.x-this.x0)<this.delta)"],
 				"Do":["this.xObj=this.x1","this.zObj=this.z1"]
