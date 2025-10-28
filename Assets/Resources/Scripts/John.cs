@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 public class John : MonoBehaviour {
     public bool Active = true;
-    public float move=0f;
     public float speed=1f;
     public float desp=5.6f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         {
-            Action.Edit("this.move","0",scopeList);
             Action.Edit("Camera.x","this.x",scopeList);
             Action.Edit("Camera.z","this.z-this.desp",scopeList);
             Action.Animate("0",gameObject);
@@ -20,39 +18,36 @@ public class John : MonoBehaviour {
         if(Condition.Collision("End",gameObject)){
             Action.Edit("Won.Active","1",scopeList);
         }
-        if(Condition.Compare("Compare(this.move==1)",scopeList)){
-            Action.PlaySound("Footsteps",gameObject);
-        }
     }
     void Update(){
         if(Condition.Keyboard("RightArrow","press")){
-            Action.Move("90","this.speed",gameObject,scopeList);
+            Action.Move("this.speed","0","90","0",gameObject,scopeList);
             Action.Edit("this.ry","90",scopeList);
             Action.Animate("1",gameObject);
-            Action.Edit("this.move","1",scopeList);
+            Action.PlaySound("Footsteps",gameObject);
         }
         if(Condition.Keyboard("LeftArrow","press")){
-            Action.Move("-90","this.speed",gameObject,scopeList);
+            Action.Move("this.speed","0","-90","0",gameObject,scopeList);
             Action.Edit("this.ry","-90",scopeList);
             Action.Animate("1",gameObject);
-            Action.Edit("this.move","1",scopeList);
+            Action.PlaySound("Footsteps",gameObject);
         }
         if(Condition.Keyboard("UpArrow","press")){
-            Action.Move("0","this.speed",gameObject,scopeList);
+            Action.Move("this.speed","0","0","0",gameObject,scopeList);
             Action.Edit("this.ry","0",scopeList);
             Action.Animate("1",gameObject);
-            Action.Edit("this.move","1",scopeList);
+            Action.PlaySound("Footsteps",gameObject);
         }
         if(Condition.Keyboard("DownArrow","press")){
-            Action.Move("180","this.speed",gameObject,scopeList);
+            Action.Move("this.speed","0","180","0",gameObject,scopeList);
             Action.Edit("this.ry","180",scopeList);
             Action.Animate("1",gameObject);
-            Action.Edit("this.move","1",scopeList);
+            Action.PlaySound("Footsteps",gameObject);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(this.move,0);Edit(Camera.x,this.x);Edit(Camera.z,this.z-this.desp);Edit(Caught.Active,1);Edit(Won.Active,1);Compare(this.move==1);Move(90,this.speed);Edit(this.ry,90);Edit(this.move,1);Move(-90,this.speed);Edit(this.ry,-90);Move(0,this.speed);Edit(this.ry,0);Move(180,this.speed);Edit(this.ry,180)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(Camera.x,this.x);Edit(Camera.z,this.z-this.desp);Edit(Caught.Active,1);Edit(Won.Active,1);Move(this.speed,0,90,0);Edit(this.ry,90);Move(this.speed,0,-90,0);Edit(this.ry,-90);Move(this.speed,0,0,0);Edit(this.ry,0);Move(this.speed,0,180,0);Edit(this.ry,180)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }
@@ -66,7 +61,7 @@ public class John : MonoBehaviour {
             TagCollisions[other.tag].Remove(other.gameObject);
     }
     void Awake() {
-        propertyList = Utils.CreateProperties("move=0;speed=1;desp=5.6");
+        propertyList = Utils.CreateProperties("speed=1;desp=5.6");
         TagCollisions["Untagged"] = new HashSet<GameObject>();
         TagCollisions["Respawn"] = new HashSet<GameObject>();
         TagCollisions["Finish"] = new HashSet<GameObject>();

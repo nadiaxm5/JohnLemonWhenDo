@@ -20,10 +20,10 @@
 			"Active": false,
 			"Properties":["counter=0"],
 			"Script":[{
-				"When":["Compare(this.counter>=100)"],
+				"When":["this.counter>=100"],
 				"Do":["QuitGame()"]
 				},{
-				"When":["Compare(this.counter<=100)"],
+				"When":["this.counter<=100"],
 				"Do":["this.counter=this.counter+1"]
 				}
 			]
@@ -33,10 +33,10 @@
 			"Active": false,
 			"Properties":["counter=0"],
 			"Script":[{
-				"When":["Compare(this.counter>=100)"],
+				"When":["this.counter>=100"],
 				"Do":["LoadScene()"]
 				},{
-				"When":["Compare(this.counter<100)"],
+				"When":["this.counter<100"],
 				"Do":["this.counter=this.counter+1"]
 				}
 			]
@@ -44,30 +44,27 @@
 			"Name":"John",
 			"Prefab":"JohnLemon",
 			"Position":[-9.8,0.0,-3.2],
-			"Properties":["move=0","speed=1","desp=5.6"],
+			"Properties":["speed=1","desp=5.6"],
 			"Script": [{
-				"Do":["this.move=0","Camera.x=this.x","Camera.z=this.z-this.desp","Animate(0)"]
+				"Do":["Camera.x=this.x","Camera.z=this.z-this.desp","Animate(0)"]
 				},{
 				"When":["Keyboard(RightArrow,press)"],
-				"Do":["Move(90,this.speed)","this.ry=90","Animate(1)","this.move=1"]
+				"Do":["Move(this.speed,0,90,0)","this.ry=90","Animate(1)","PlaySound(Footsteps)"]
 				},{
 				"When":["Keyboard(LeftArrow,press)"],
-				"Do":["Move(-90,this.speed)","this.ry=-90","Animate(1)","this.move=1"]
+				"Do":["Move(this.speed,0,-90,0)","this.ry=-90","Animate(1)","PlaySound(Footsteps)"]
 				},{
 				"When":["Keyboard(UpArrow,press)"],
-				"Do":["Move(0,this.speed)","this.ry=0","Animate(1)","this.move=1"]
+				"Do":["Move(this.speed,0,0,0)","this.ry=0","Animate(1)","PlaySound(Footsteps)"]
 				},{
 				"When":["Keyboard(DownArrow,press)"],
-				"Do":["Move(180,this.speed)","this.ry=180","Animate(1)","this.move=1"]
+				"Do":["Move(this.speed,0,180,0)","this.ry=180","Animate(1)","PlaySound(Footsteps)"]
 				},{
 				"When":["Collision(Enemy)"],
 				"Do":["Caught.Active=1"]
 				},{
 				"When":["Collision(End)"],
 				"Do":["Won.Active=1"]
-				},{
-				"When":["Compare(this.move==1)"],
-				"Do":["PlaySound(Footsteps)"]
 				}
 			]
 		},{
@@ -91,10 +88,10 @@
 			"Script":[{
 				"Do":["NavigateTo(this.speed,this.x,this.y,this.zObj)"]
 				},{
-				"When":["Compare(this.z>=this.z1)"],
+				"When":["this.z>=this.z1"],
 				"Do":["this.zObj=this.z0"]
 				},{
-				"When":["Compare(this.z<=this.z0)"],
+				"When":["this.z<=this.z0"],
 				"Do":["this.zObj=this.z1"]
 				}
 			]
@@ -107,10 +104,10 @@
 			"Script":[{
 				"Do":["NavigateTo(this.speed,this.x,this.y,this.zObj)"]
 				},{
-				"When":["Compare(this.z>=this.z1)"],
+				"When":["this.z>=this.z1"],
 				"Do":["this.zObj=this.z0"]
 				},{
-				"When":["Compare(this.z<=this.z0)"],
+				"When":["this.z<=this.z0"],
 				"Do":["this.zObj=this.z1"]
 				}
 			]
