@@ -5,12 +5,12 @@ public class John : MonoBehaviour {
     public bool Active = true;
     public float speed=1f;
     public float desp=5.6f;
+    public float moving=0f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
     void FixedUpdate(){
         {
             Action.Edit("Camera.x","this.x",scopeList);
             Action.Edit("Camera.z","this.z-this.desp",scopeList);
-            Action.Animate("0",gameObject);
         }
         if(Condition.Collision("Enemy",gameObject)){
             Action.Edit("Caught.Active","1",scopeList);
@@ -18,36 +18,51 @@ public class John : MonoBehaviour {
         if(Condition.Collision("End",gameObject)){
             Action.Edit("Won.Active","1",scopeList);
         }
+        if(Condition.Compare("this.moving==0",scopeList)){
+            Action.Animate("John_Idle",gameObject);
+        }
+        if(Condition.Compare("this.moving==1",scopeList)){
+            Action.Animate("John_Walk",gameObject);
+            Action.PlaySound("Footsteps",gameObject);
+        }
     }
     void Update(){
         if(Condition.Keyboard("RightArrow","press")){
             Action.Move("this.speed","0","90","0",gameObject,scopeList);
             Action.Edit("this.ry","90",scopeList);
-            Action.Animate("1",gameObject);
-            Action.PlaySound("Footsteps",gameObject);
+            Action.Edit("this.moving","1",scopeList);
         }
         if(Condition.Keyboard("LeftArrow","press")){
             Action.Move("this.speed","0","-90","0",gameObject,scopeList);
             Action.Edit("this.ry","-90",scopeList);
-            Action.Animate("1",gameObject);
-            Action.PlaySound("Footsteps",gameObject);
+            Action.Edit("this.moving","1",scopeList);
         }
         if(Condition.Keyboard("UpArrow","press")){
             Action.Move("this.speed","0","0","0",gameObject,scopeList);
             Action.Edit("this.ry","0",scopeList);
-            Action.Animate("1",gameObject);
-            Action.PlaySound("Footsteps",gameObject);
+            Action.Edit("this.moving","1",scopeList);
         }
         if(Condition.Keyboard("DownArrow","press")){
             Action.Move("this.speed","0","180","0",gameObject,scopeList);
             Action.Edit("this.ry","180",scopeList);
-            Action.Animate("1",gameObject);
-            Action.PlaySound("Footsteps",gameObject);
+            Action.Edit("this.moving","1",scopeList);
+        }
+        if(Condition.Keyboard("RightArrow","up")){
+            Action.Edit("this.moving","0",scopeList);
+        }
+        if(Condition.Keyboard("LeftArrow","up")){
+            Action.Edit("this.moving","0",scopeList);
+        }
+        if(Condition.Keyboard("UpArrow","up")){
+            Action.Edit("this.moving","0",scopeList);
+        }
+        if(Condition.Keyboard("DownArrow","up")){
+            Action.Edit("this.moving","0",scopeList);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(Camera.x,this.x);Edit(Camera.z,this.z-this.desp);Edit(Caught.Active,1);Edit(Won.Active,1);Move(this.speed,0,90,0);Edit(this.ry,90);Move(this.speed,0,-90,0);Edit(this.ry,-90);Move(this.speed,0,0,0);Edit(this.ry,0);Move(this.speed,0,180,0);Edit(this.ry,180)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(Camera.x,this.x);Edit(Camera.z,this.z-this.desp);Edit(Caught.Active,1);Edit(Won.Active,1);this.moving==0;this.moving==1;Move(this.speed,0,90,0);Edit(this.ry,90);Edit(this.moving,1);Move(this.speed,0,-90,0);Edit(this.ry,-90);Move(this.speed,0,0,0);Edit(this.ry,0);Move(this.speed,0,180,0);Edit(this.ry,180);Edit(this.moving,0)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }
@@ -61,7 +76,7 @@ public class John : MonoBehaviour {
             TagCollisions[other.tag].Remove(other.gameObject);
     }
     void Awake() {
-        propertyList = Utils.CreateProperties("speed=1;desp=5.6");
+        propertyList = Utils.CreateProperties("speed=1;desp=5.6;moving=0");
         TagCollisions["Untagged"] = new HashSet<GameObject>();
         TagCollisions["Respawn"] = new HashSet<GameObject>();
         TagCollisions["Finish"] = new HashSet<GameObject>();
