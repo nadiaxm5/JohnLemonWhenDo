@@ -15,7 +15,7 @@ public class Caught : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"this.counter>=100;this.counter<100;Edit(this.counter,this.counter+1)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Compare(this.counter>=100);LoadScene();Compare(this.counter<100);Edit(this.counter,this.counter+1)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

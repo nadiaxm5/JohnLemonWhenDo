@@ -21,7 +21,7 @@ public class Ghost2 : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"NavigateTo(this.speed,this.x,this.y,this.zObj);this.z>=this.z1;Edit(this.zObj,this.z0);this.z<=this.z0;Edit(this.zObj,this.z1)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"NavigateTo(this.speed,this.x,this.y,this.zObj);Compare(this.z>=this.z1);Edit(this.zObj,this.z0);Compare(this.z<=this.z0);Edit(this.zObj,this.z1)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

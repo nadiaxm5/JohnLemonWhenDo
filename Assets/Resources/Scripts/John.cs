@@ -62,7 +62,7 @@ public class John : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(Camera.x,this.x);Edit(Camera.z,this.z-this.desp);Edit(Caught.Active,1);Edit(Won.Active,1);this.moving==0;this.moving==1;Move(this.speed,0,90,0);Edit(this.ry,90);Edit(this.moving,1);Move(this.speed,0,-90,0);Edit(this.ry,-90);Move(this.speed,0,0,0);Edit(this.ry,0);Move(this.speed,0,180,0);Edit(this.ry,180);Edit(this.moving,0)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(Camera.x,this.x);Edit(Camera.z,this.z-this.desp);Edit(Caught.Active,1);Edit(Won.Active,1);Compare(this.moving==0);Animate(John_Idle);Compare(this.moving==1);Animate(John_Walk);PlaySound(Footsteps);Keyboard(RightArrow,press);Move(this.speed,0,90,0);Edit(this.ry,90);Edit(this.moving,1);Keyboard(LeftArrow,press);Move(this.speed,0,-90,0);Edit(this.ry,-90);Keyboard(UpArrow,press);Move(this.speed,0,0,0);Edit(this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,180,0);Edit(this.ry,180);Keyboard(RightArrow,up);Edit(this.moving,0);Keyboard(LeftArrow,up);Keyboard(UpArrow,up);Keyboard(DownArrow,up)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }
