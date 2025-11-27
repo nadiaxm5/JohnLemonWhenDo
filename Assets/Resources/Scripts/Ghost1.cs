@@ -8,6 +8,7 @@ public class Ghost1 : MonoBehaviour {
     public float z0=-4.5f;
     public float z1=6.4f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
+    private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         {
             Action.NavigateTo("this.speed","this.x","this.y","this.zObj",gameObject,scopeList);

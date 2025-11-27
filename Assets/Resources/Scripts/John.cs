@@ -7,10 +7,11 @@ public class John : MonoBehaviour {
     public float desp=5.6f;
     public float moving=0f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
+    private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         {
-            Action.Edit("Camera.x","this.x",scopeList);
-            Action.Edit("Camera.z","this.z-this.desp",scopeList);
+            Action.Edit("#CameraPosition.x","this.x",scopeList);
+            Action.Edit("#CameraPosition.z","this.z-this.desp",scopeList);
         }
         if(Condition.Collision("Enemy",gameObject)){
             Action.Edit("Caught.Active","1",scopeList);
@@ -62,7 +63,7 @@ public class John : MonoBehaviour {
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(Camera.x,this.x);Edit(Camera.z,this.z-this.desp);Edit(Caught.Active,1);Edit(Won.Active,1);Compare(this.moving==0);Animate(John_Idle);Compare(this.moving==1);Animate(John_Walk);PlaySound(Footsteps);Keyboard(RightArrow,press);Move(this.speed,0,90,0);Edit(this.ry,90);Edit(this.moving,1);Keyboard(LeftArrow,press);Move(this.speed,0,-90,0);Edit(this.ry,-90);Keyboard(UpArrow,press);Move(this.speed,0,0,0);Edit(this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,180,0);Edit(this.ry,180);Keyboard(RightArrow,up);Edit(this.moving,0);Keyboard(LeftArrow,up);Keyboard(UpArrow,up);Keyboard(DownArrow,up)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(#CameraPosition.x,this.x);Edit(#CameraPosition.z,this.z-this.desp);Collision(Enemy);Edit(Caught.Active,1);Collision(End);Edit(Won.Active,1);Compare(this.moving==0);Animate(John_Idle);Compare(this.moving==1);Animate(John_Walk);PlaySound(Footsteps);Keyboard(RightArrow,press);Move(this.speed,0,90,0);Edit(this.ry,90);Edit(this.moving,1);Keyboard(LeftArrow,press);Move(this.speed,0,-90,0);Edit(this.ry,-90);Keyboard(UpArrow,press);Move(this.speed,0,0,0);Edit(this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,180,0);Edit(this.ry,180);Keyboard(RightArrow,up);Edit(this.moving,0);Keyboard(LeftArrow,up);Keyboard(UpArrow,up);Keyboard(DownArrow,up)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }

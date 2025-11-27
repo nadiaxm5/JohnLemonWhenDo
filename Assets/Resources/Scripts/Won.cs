@@ -5,6 +5,7 @@ public class Won : MonoBehaviour {
     public bool Active = false;
     public float counter=0f;
     public Dictionary<string, float> propertyList = new Dictionary<string, float>();
+    private Dictionary<string, float> timers = new Dictionary<string, float>();
     void FixedUpdate(){
         if(Condition.Compare("this.counter>=100",scopeList)){
             Action.QuitGame();
