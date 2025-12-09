@@ -1221,7 +1221,6 @@ namespace B83.LogicExpressionParser
                 if (m_PropertyPath.EndsWith(".z") && zField != null)
                     return Convert.ToDouble(zField.GetValue(currentValue));
 
-                // Calcular magnitud como fallback
                 double x = Convert.ToDouble(xField.GetValue(currentValue));
                 double y = Convert.ToDouble(yField.GetValue(currentValue));
                 double z = Convert.ToDouble(zField.GetValue(currentValue));
