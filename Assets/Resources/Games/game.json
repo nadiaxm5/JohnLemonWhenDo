@@ -21,15 +21,10 @@
 			"ActorName":"Won",
 			"PrefabName":"Won",
 			"Active": false,
-			"Properties":["counter=0"],
 			"Script":[
 				{
-				"When":["Compare(this.counter>=100)"],
+				"When":["Timer(1)"],
 				"Do":["QuitGame()"]
-				},
-				{
-				"When":["Compare(this.counter<=100)"],
-				"Do":["Edit(this.counter,this.counter+1)"]
 				}
 			]
 		},
@@ -37,15 +32,10 @@
 			"ActorName":"Caught",
 			"PrefabName":"Caught",
 			"Active": false,
-			"Properties":["counter=0"],
 			"Script":[
 				{
-				"When":["Compare(this.counter>=100)"],
+				"When":["Timer(1)"],
 				"Do":["LoadScene()"]
-				},
-				{
-				"When":["Compare(this.counter<100)"],
-				"Do":["Edit(this.counter,this.counter+1)"]
 				}
 			]
 		},
@@ -75,19 +65,7 @@
 				"Do":["Move(this.speed,0,180,0)","Edit(this.ry,180)","Edit(this.moving,1)"]
 				},
 				{
-				"When":["Keyboard(RightArrow,up)"],
-				"Do":["Edit(this.moving,0)"]
-				},
-				{
-				"When":["Keyboard(LeftArrow,up)"],
-				"Do":["Edit(this.moving,0)"]
-				},
-				{
-				"When":["Keyboard(UpArrow,up)"],
-				"Do":["Edit(this.moving,0)"]
-				},
-				{
-				"When":["Keyboard(DownArrow,up)"],
+				"When":["Keyboard(RightArrow,up) OR Keyboard(LeftArrow,up) OR Keyboard(UpArrow,up) OR Keyboard(DownArrow,up)"],
 				"Do":["Edit(this.moving,0)"]
 				},
 				{
@@ -99,11 +77,11 @@
 				"Do":["Edit(Won.Active,1)"]
 				},
 				{
-				"When":["Compare(this.moving==0)"],
+				"When":["!Check(this.moving)"],
 				"Do":["Animate(John_Idle)"]
 				},
 				{
-				"When":["Compare(this.moving==1)"],
+				"When":["Check(this.moving)"],
 				"Do":["Animate(John_Walk)","PlaySound(Footsteps)"]
 				}
 			]

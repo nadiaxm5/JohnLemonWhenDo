@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     private Light sunLight;
     private AudioSource audioSource;
 
-    public string GameName = "Unknown";
+    public string GameName = "JHON_LEMON";
     public Vector2 ScreenResolution = new Vector2(1920f, 1080f);
     public Vector3 CameraPosition = new Vector3(-9.8f, 5.6f, -8.8f);
     public Vector3 CameraRotation = new Vector3(45f, 0f, 0f);

@@ -19,10 +19,10 @@ public class John : MonoBehaviour {
         if(Condition.Collision("End",gameObject)){
             Action.Edit("Won.Active","1",scopeList);
         }
-        if(Condition.Compare("this.moving==0",scopeList)){
+        if(!Condition.Check("this.moving",scopeList)){
             Action.Animate("John_Idle",gameObject);
         }
-        if(Condition.Compare("this.moving==1",scopeList)){
+        if(Condition.Check("this.moving",scopeList)){
             Action.Animate("John_Walk",gameObject);
             Action.PlaySound("Footsteps",gameObject);
         }
@@ -48,22 +48,13 @@ public class John : MonoBehaviour {
             Action.Edit("this.ry","180",scopeList);
             Action.Edit("this.moving","1",scopeList);
         }
-        if(Condition.Keyboard("RightArrow","up")){
-            Action.Edit("this.moving","0",scopeList);
-        }
-        if(Condition.Keyboard("LeftArrow","up")){
-            Action.Edit("this.moving","0",scopeList);
-        }
-        if(Condition.Keyboard("UpArrow","up")){
-            Action.Edit("this.moving","0",scopeList);
-        }
-        if(Condition.Keyboard("DownArrow","up")){
+        if(Condition.Keyboard("RightArrow","up") || Condition.Keyboard("LeftArrow","up") || Condition.Keyboard("UpArrow","up") || Condition.Keyboard("DownArrow","up")){
             Action.Edit("this.moving","0",scopeList);
         }
     }
     public Dictionary<string, GameObject> scopeList = new Dictionary<string, GameObject>();
     void Start() {
-        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(#CameraPosition.x,this.x);Edit(#CameraPosition.z,this.z-this.desp);Collision(Enemy);Edit(Caught.Active,1);Collision(End);Edit(Won.Active,1);Compare(this.moving==0);Animate(John_Idle);Compare(this.moving==1);Animate(John_Walk);PlaySound(Footsteps);Keyboard(RightArrow,press);Move(this.speed,0,90,0);Edit(this.ry,90);Edit(this.moving,1);Keyboard(LeftArrow,press);Move(this.speed,0,-90,0);Edit(this.ry,-90);Keyboard(UpArrow,press);Move(this.speed,0,0,0);Edit(this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,180,0);Edit(this.ry,180);Keyboard(RightArrow,up);Edit(this.moving,0);Keyboard(LeftArrow,up);Keyboard(UpArrow,up);Keyboard(DownArrow,up)");
+        scopeList = Utils.CreateScope(gameObject.GetInstanceID(),"Edit(#CameraPosition.x,this.x);Edit(#CameraPosition.z,this.z-this.desp);Collision(Enemy);Edit(Caught.Active,1);Collision(End);Edit(Won.Active,1);Check(this.moving);Animate(John_Idle);Animate(John_Walk);PlaySound(Footsteps);Keyboard(RightArrow,press);Move(this.speed,0,90,0);Edit(this.ry,90);Edit(this.moving,1);Keyboard(LeftArrow,press);Move(this.speed,0,-90,0);Edit(this.ry,-90);Keyboard(UpArrow,press);Move(this.speed,0,0,0);Edit(this.ry,0);Keyboard(DownArrow,press);Move(this.speed,0,180,0);Edit(this.ry,180);Keyboard(RightArrow,up);Keyboard(LeftArrow,up);Keyboard(UpArrow,up);Keyboard(DownArrow,up);Edit(this.moving,0)");
         if (Active) gameObject.SetActive(true);
         else gameObject.SetActive(false);
     }
