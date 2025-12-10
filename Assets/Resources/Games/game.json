@@ -43,10 +43,10 @@
 			"ActorName":"John",
 			"PrefabName":"JohnLemon",
 			"Position":[-9.8,0.0,-3.2],
-			"Properties":["speed=1","desp=5.6","moving=0"],
+			"Properties":["speed=1","offset=5.6","moving=0"],
 			"Script": [
 				{
-				"Do":["Edit(#CameraPosition.x,this.x)","Edit(#CameraPosition.z,this.z-this.desp)"]
+				"Do":["Edit(#CameraPosition.x,this.x)","Edit(#CameraPosition.z,this.z-this.offset)"]
 				},
 				{
 				"When":["Keyboard(RightArrow,press)"],
@@ -77,7 +77,7 @@
 				"Do":["Edit(Won.Active,1)"]
 				},
 				{
-				"When":["!Check(this.moving)"],
+				"When":["NOT Check(this.moving)"],
 				"Do":["Animate(John_Idle)"]
 				},
 				{
@@ -105,18 +105,18 @@
 			"PrefabName":"Ghost",
 			"Tag": "Enemy",
 			"Position":[-5.5,0.0,-4.5],
-			"Properties":["speed=1.0","zObj=6.4","z0=-4.5","z1=6.4"],
+			"Properties":["speed=1.0","zTarget=6.4","z0=-4.5","z1=6.4"],
 			"Script":[
 				{
-				"Do":["NavigateTo(this.speed,this.x,this.y,this.zObj)"]
+				"Do":["NavigateTo(this.speed,this.x,this.y,this.zTarget)"]
 				},
 				{
 				"When":["Compare(this.z>=this.z1)"],
-				"Do":["Edit(this.zObj,this.z0)"]
+				"Do":["Edit(this.zTarget,this.z0)"]
 				},
 				{
 				"When":["Compare(this.z<=this.z0)"],
-				"Do":["Edit(this.zObj,this.z1)"]
+				"Do":["Edit(this.zTarget,this.z1)"]
 				}
 			]
 		},
@@ -125,18 +125,18 @@
 			"PrefabName":"Ghost",
 			"Tag": "Enemy",
 			"Position":[0.9,0.0,-3.5],
-			"Properties":["speed=1.0","zObj=7.6","z0=-3.5","z1=7.6"],
+			"Properties":["speed=1.0","zTarget=7.6","z0=-3.5","z1=7.6"],
 			"Script":[
 				{
-				"Do":["NavigateTo(this.speed,this.x,this.y,this.zObj)"]
+				"Do":["NavigateTo(this.speed,this.x,this.y,this.zTarget)"]
 				},
 				{
 				"When":["Compare(this.z>=this.z1)"],
-				"Do":["Edit(this.zObj,this.z0)"]
+				"Do":["Edit(this.zTarget,this.z0)"]
 				},
 				{
 				"When":["Compare(this.z<=this.z0)"],
-				"Do":["Edit(this.zObj,this.z1)"]
+				"Do":["Edit(this.zTarget,this.z1)"]
 				}
 			]
 		},
@@ -145,26 +145,26 @@
 			"PrefabName":"Ghost",
 			"Tag": "Enemy",
 			"Position":[3.3,0.0,5.8],
-			"Properties":["delta=0.5","speed=1.0","xObj=3.2","zObj=12.3","x0=3.2","x1=6.5","z0=5.7","z1=12.3"],
+			"Properties":["delta=0.5","speed=1.0","xTarget=3.2","zTarget=12.3","x0=3.2","x1=6.5","z0=5.7","z1=12.3"],
 			"Script":[
 				{
-				"Do":["NavigateTo(this.speed,this.xObj,this.y,this.zObj)"]
+				"Do":["NavigateTo(this.speed,this.xTarget,this.y,this.zTarget)"]
 				},
 				{
 					"When": ["Compare(this.z<this.z1+this.delta) AND Compare(this.z>this.z1-this.delta) AND Compare(this.x<this.x0+this.delta) AND Compare(this.x>this.x0-this.delta)"],
-					"Do": ["Edit(this.xObj,this.x1)"]
+					"Do": ["Edit(this.xTarget,this.x1)"]
 				},
 				{
 					"When": ["Compare(this.z<this.z1+this.delta) AND Compare(this.z>this.z1-this.delta) AND Compare(this.x<this.x1+this.delta) AND Compare(this.x>this.x1-this.delta)"],
-					"Do": ["Edit(this.zObj,this.z0)"]
+					"Do": ["Edit(this.zTarget,this.z0)"]
 				},
 				{
 					"When": ["Compare(this.z<this.z0+this.delta) AND Compare(this.z>this.z0-this.delta) AND Compare(this.x<this.x1+this.delta) AND Compare(this.x>this.x1-this.delta)"],
-					"Do": ["Edit(this.xObj,this.x0)"]
+					"Do": ["Edit(this.xTarget,this.x0)"]
 				},
 				{
 					"When": ["Compare(this.z<this.z0+this.delta) AND Compare(this.z>this.z0-this.delta) AND Compare(this.x<this.x0+this.delta) AND Compare(this.x>this.x0-this.delta)"],
-					"Do": ["Edit(this.zObj,this.z1)"]
+					"Do": ["Edit(this.zTarget,this.z1)"]
 				}
 			]
 		},
@@ -173,18 +173,18 @@
 			"PrefabName":"Ghost",
 			"Tag": "Enemy",
 			"Position":[3.2,0.0,-5.0],
-			"Properties":["delta=0.5","speed=1.0","xObj=7.4","zObj=-2.0","x0=3.2","x1=7.4","z0=-5","z1=-2"],
+			"Properties":["delta=0.5","speed=1.0","xTarget=7.4","zTarget=-2.0","x0=3.2","x1=7.4","z0=-5","z1=-2"],
 			"Script":[
 				{
-				"Do":["NavigateTo(this.speed,this.xObj,this.y,this.zObj)"]
+				"Do":["NavigateTo(this.speed,this.xTarget,this.y,this.zTarget)"]
 				},
 				{
 					"When": ["Compare(this.z<this.z0+this.delta) AND Compare(this.z>this.z0-this.delta) AND Compare(this.x<this.x0+this.delta) AND Compare(this.x>this.x0-this.delta)"],
-					"Do": ["Edit(this.xObj,this.x1)", "Edit(this.zObj,this.z1)"]
+					"Do": ["Edit(this.xTarget,this.x1)", "Edit(this.zTarget,this.z1)"]
 				},
 				{
 					"When": ["Compare(this.z<this.z1+this.delta) AND Compare(this.z>this.z1-this.delta) AND Compare(this.x<this.x1+this.delta) AND Compare(this.x>this.x1-this.delta)"],
-					"Do": ["Edit(this.xObj,this.x0)", "Edit(this.zObj,this.z0)"]
+					"Do": ["Edit(this.xTarget,this.x0)", "Edit(this.zTarget,this.z0)"]
 				}
 			]
 		}
